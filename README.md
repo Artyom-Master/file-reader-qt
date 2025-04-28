@@ -68,4 +68,8 @@ All app logic divided into:
 
 <br/>
 
+*I added WordStatsModel to **View** because it works in GUI thread and data for displaying is gotten by it from FileReaderWorker when it should be displayed*
+
+<br/>
+
 **_ADD HERE_**
