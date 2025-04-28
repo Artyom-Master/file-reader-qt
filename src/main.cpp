@@ -1,11 +1,21 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include "Controller.h"
+#include "WordStatsModel.h"
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
+    Controller controller;
+    WordStatsModel wordStatsModel;
+
     QQmlApplicationEngine engine;
+
+    engine.rootContext()->setContextProperty("controller", &controller);
+    engine.rootContext()->setContextProperty("wordStatsModel", &wordStatsModel);
+
     const QUrl url(QStringLiteral("qrc:/file-reader-qt/qml/Main.qml"));
     QObject::connect(
         &engine,
