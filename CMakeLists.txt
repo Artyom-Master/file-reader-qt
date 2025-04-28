@@ -17,6 +17,13 @@ qt_add_qml_module(appfile-reader-qt
     VERSION 1.0
     QML_FILES
         qml/Main.qml
+        SOURCES src/controller.h src/controller.cpp
+        SOURCES src/wordstatsmodel.h src/wordstatsmodel.cpp
+        SOURCES src/filereaderworker.h src/filereaderworker.cpp
+        QML_FILES
+        QML_FILES qml/components/HistogramView.qml
+        QML_FILES qml/components/HistogramBar.qml
+        QML_FILES qml/views/MainView.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
