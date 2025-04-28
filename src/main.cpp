@@ -3,9 +3,34 @@
 #include <QQmlContext>
 #include "Controller.h"
 #include "WordStatsModel.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+QtMessageHandler originalHandler = nullptr;
+
+void logToFile(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    QString message = qFormatLogMessage(type, context, msg);
+    static FILE *logFile = fopen((QDateTime::currentDateTime().toString("yyyy-MM-dd") + ".txt").toStdString().c_str(), "a");
+
+    if(logFile)
+    {
+        fprintf(logFile, "%s\n", qPrintable(message));
+    }
+
+    fflush(logFile);
+
+    if (originalHandler)
+    {
+        originalHandler(type, context, msg);
+    }
+}
 
 int main(int argc, char *argv[])
 {
+    qSetMessagePattern("[%{time yyyy-MM-dd hh:mm:ss.zzz}] - %{type} - %{qthreadptr} - %{file} - %{line}: %{message}");
+    originalHandler = qInstallMessageHandler(logToFile);
+
     QGuiApplication app(argc, argv);
 
     Controller controller;
@@ -27,6 +52,8 @@ int main(int argc, char *argv[])
         },
         Qt::QueuedConnection);
     engine.load(url);
+
+    qInfo() << "Application started";
 
     return app.exec();
 }
