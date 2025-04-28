@@ -24,6 +24,7 @@ qt_add_qml_module(appfile-reader-qt
         QML_FILES qml/components/HistogramView.qml
         QML_FILES qml/components/HistogramBar.qml
         QML_FILES qml/views/MainView.qml
+        SOURCES
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -47,3 +48,6 @@ install(TARGETS appfile-reader-qt
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
+add_subdirectory(tests/tst_filereaderworker)
+add_subdirectory(tests/tst_controller)
+add_subdirectory(tests/tst_wordstatsmodel)
