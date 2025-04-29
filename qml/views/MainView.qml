@@ -16,6 +16,7 @@ ColumnLayout {
     anchors.fill: parent
     anchors.margins: variableMarginSize
 
+    //Histogram View
     Components.HistogramView {}
 
     Text {
@@ -48,21 +49,21 @@ ColumnLayout {
         Button {
             text: qsTr("Start")
             font.pixelSize: variableTextSize
-            //onClicked: controller.startProcessing()  // Assumes 'controller' is a context property with this method
+            onClicked: controller.startProcessing()  // Assumes 'controller' is a context property with this method
         }
 
         Button {
             text: qsTr("Pause")
             font.pixelSize: variableTextSize
-            //onClicked: controller.pauseProcessing()
-            //visible: controller.canPause  // Assumes 'canPause' is a property indicating pause capability
+            onClicked: controller.pauseProcessing()
+            enabled: controller.canPause  // Assumes 'canPause' is a property indicating pause capability
         }
 
         Button {
             text: qsTr("Cancel")
             font.pixelSize: variableTextSize
-            //onClicked: controller.cancelProcessing()
-            //visible: controller.canCancel  // Assumes 'canCancel' is a property indicating cancel capability
+            onClicked: controller.cancelProcessing()
+            enabled: controller.canCancel  // Assumes 'canCancel' is a property indicating cancel capability
         }
     }
 
@@ -71,6 +72,6 @@ ColumnLayout {
         id: fileDialog
         title: qsTr("Select a Text File")
         nameFilters: ["Text Files (*.txt)", "All Files (*)"]
-        //onAccepted: controller.setFilePath(fileDialog.fileUrl)  // Assumes 'setFilePath' method in controller
+        onAccepted: controller.setFilePath(fileDialog.fileUrl)  // Assumes 'setFilePath' method in controller
     }
 }
