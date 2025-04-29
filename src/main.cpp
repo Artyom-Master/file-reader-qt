@@ -32,6 +32,7 @@ int main(int argc, char *argv[])
     originalHandler = qInstallMessageHandler(logToFile);
 
     QGuiApplication app(argc, argv);
+    QCoreApplication::setAttribute(Qt::AA_QtQuickUseDefaultSizePolicy);
 
     Controller controller;
     WordStatsModel wordStatsModel;
