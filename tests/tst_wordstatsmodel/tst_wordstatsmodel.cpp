@@ -1,6 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
-#include "wordstatsmodel.h"
+#include "wordscountermodel.h"
 
 // add necessary includes here
 
@@ -13,7 +13,7 @@ public:
     ~tst_wordstatsmodel();
 
 private:
-    WordStatsModel m_wordStatsModel;
+    WordsCounterModel m_wordStatsModel;
 
 private slots:
     void initTestCase();

@@ -7,6 +7,7 @@
 class FileReaderWorker : public QObject
 {
     Q_OBJECT
+
 public:
     explicit FileReaderWorker(QObject *parent = nullptr);
 

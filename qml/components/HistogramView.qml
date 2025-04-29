@@ -17,7 +17,7 @@ Rectangle {
         spacing: variableMarginSize
 
         Repeater {
-            model: wordStatsModel  // Assumes wordModel is a ListModel with 'word' and 'count' roles
+            model: wordsCounterModel  // Assumes wordModel is a ListModel with 'word' and 'count' roles
 
             delegate: HistogramBar {
                 count: wordCount
