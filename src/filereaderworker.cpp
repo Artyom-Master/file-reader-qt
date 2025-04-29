@@ -32,6 +32,12 @@ void FileReaderWorker::openFile(const QString &filePath)
 
 void FileReaderWorker::readFile()
 {
+    if(!m_currentFile.isOpen())
+    {
+        emit errorOccurred("File is not opened, nothing to read");
+        return;
+    }
+
     QTextStream inStream(&m_currentFile);
     QString word;
 

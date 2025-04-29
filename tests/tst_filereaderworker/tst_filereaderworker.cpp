@@ -182,13 +182,11 @@ void tst_filereaderworker::testReadEmptyFile() {
 void tst_filereaderworker::testReadWithoutOpen() {
     FileReaderWorker worker;
     QSignalSpy errorSpy(&worker, &FileReaderWorker::errorOccurred);
-    QSignalSpy finishedSpy(&worker, &FileReaderWorker::finished);
 
     worker.readFile();
 
     QCOMPARE(errorSpy.count(), 1);
-    QVERIFY(errorSpy.takeFirst().at(0).toString().contains("Failed to open file"));
-    QCOMPARE(finishedSpy.count(), 1);
+    QVERIFY(errorSpy.takeFirst().at(0).toString().contains("File is not opened, nothing to read"));
 }
 
 
