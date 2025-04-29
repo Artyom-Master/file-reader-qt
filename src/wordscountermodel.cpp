@@ -54,7 +54,7 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
 
     for(const auto& entry : currentList)
     {
-        m_topFrequentWordsList.emplace_back(entry.first, entry.second);
+        m_topFrequentWordsList.emplace_back(WordEntry{ .word = entry.first , .count = entry.second});
     }
 
     endInsertRows();
