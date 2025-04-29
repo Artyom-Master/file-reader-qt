@@ -2,6 +2,7 @@
 #define FILEREADERWORKER_H
 
 #include <QObject>
+#include <QFile>
 
 class FileReaderWorker : public QObject
 {
@@ -9,7 +10,18 @@ class FileReaderWorker : public QObject
 public:
     explicit FileReaderWorker(QObject *parent = nullptr);
 
+public slots:
+    void openFile(const QString &filePath);
+    void readFile();
+
 signals:
+    void fileOpened();
+    void wordRead(const QString &line);
+    void finished();
+    void errorOccurred(const QString &error);
+
+private:
+    QFile m_currentFile;
 };
 
 #endif // FILEREADERWORKER_H
