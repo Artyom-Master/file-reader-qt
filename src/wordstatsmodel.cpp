@@ -1,6 +1,9 @@
 #include "wordstatsmodel.h"
 
-WordStatsModel::WordStatsModel() {}
+WordStatsModel::WordStatsModel()
+    : m_countProgress{ 0 }
+    , m_statusInfoText{"Open any text file"}
+{}
 
 int WordStatsModel::rowCount(const QModelIndex &parent) const
 {
