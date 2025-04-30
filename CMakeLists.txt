@@ -51,5 +51,5 @@ install(TARGETS file-reader-qt
 )
 add_subdirectory(tests/tst_filereaderworker)
 add_subdirectory(tests/tst_controller)
-add_subdirectory(tests/tst_wordstatsmodel)
+add_subdirectory(tests/tst_wordscountermodel)
 add_subdirectory(tests/tst_wordscounterworker)

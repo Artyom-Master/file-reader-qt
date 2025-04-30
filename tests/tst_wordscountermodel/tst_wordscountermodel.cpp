@@ -4,13 +4,13 @@
 
 // add necessary includes here
 
-class tst_wordstatsmodel : public QObject
+class tst_wordscountermodel : public QObject
 {
     Q_OBJECT
 
 public:
-    tst_wordstatsmodel();
-    ~tst_wordstatsmodel();
+    tst_wordscountermodel();
+    ~tst_wordscountermodel();
 
 private:
     WordsCounterModel m_wordStatsModel;
@@ -27,22 +27,22 @@ private slots:
     void testEmptyInput();
 };
 
-tst_wordstatsmodel::tst_wordstatsmodel() {}
+tst_wordscountermodel::tst_wordscountermodel() {}
 
-tst_wordstatsmodel::~tst_wordstatsmodel() {}
+tst_wordscountermodel::~tst_wordscountermodel() {}
 
-void tst_wordstatsmodel::initTestCase() {}
+void tst_wordscountermodel::initTestCase() {}
 
-void tst_wordstatsmodel::cleanupTestCase() {}
+void tst_wordscountermodel::cleanupTestCase() {}
 
-void tst_wordstatsmodel::testInitialState()
+void tst_wordscountermodel::testInitialState()
 {
     WordsCounterModel model;
     QCOMPARE(model.rowCount(), 0);
     QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
 }
 
-void tst_wordstatsmodel::testSetTopFrequentWordsList()
+void tst_wordscountermodel::testSetTopFrequentWordsList()
 {
     WordsCounterModel model;
     std::vector<std::pair<QString, int>> words = {
@@ -57,7 +57,7 @@ void tst_wordstatsmodel::testSetTopFrequentWordsList()
     }
 }
 
-void tst_wordstatsmodel::testResetModel()
+void tst_wordscountermodel::testResetModel()
 {
     WordsCounterModel model;
     std::vector<std::pair<QString, int>> words = {
@@ -70,7 +70,7 @@ void tst_wordstatsmodel::testResetModel()
     QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
 }
 
-void tst_wordstatsmodel::testInvalidIndices()
+void tst_wordscountermodel::testInvalidIndices()
 {
     WordsCounterModel model;
     std::vector<std::pair<QString, int>> words = {
@@ -81,7 +81,7 @@ void tst_wordstatsmodel::testInvalidIndices()
     QVERIFY(!model.data(model.index(1, 0), WordsCounterModel::WordRole).isValid());
 }
 
-void tst_wordstatsmodel::testRoleNames()
+void tst_wordscountermodel::testRoleNames()
 {
     WordsCounterModel model;
     QHash<int, QByteArray> roles = model.roleNames();
@@ -91,7 +91,7 @@ void tst_wordstatsmodel::testRoleNames()
     QCOMPARE(roles.value(WordsCounterModel::CountRole), QByteArray("count"));
 }
 
-void tst_wordstatsmodel::testEmptyInput()
+void tst_wordscountermodel::testEmptyInput()
 {
     WordsCounterModel model;
     std::vector<std::pair<QString, int>> emptyWords;
@@ -100,6 +100,6 @@ void tst_wordstatsmodel::testEmptyInput()
     QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
 }
 
-QTEST_MAIN(tst_wordstatsmodel)
+QTEST_MAIN(tst_wordscountermodel)
 
-#include "tst_wordstatsmodel.moc"
+#include "tst_wordscountermodel.moc"
