@@ -17,7 +17,7 @@ public slots:
 
 signals:
     void fileOpened();
-    void wordRead(const QString &line);
+    void wordRead(QString word);
     void finished();
     void errorOccurred(const QString &error);
 

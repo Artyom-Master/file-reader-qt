@@ -25,6 +25,7 @@ qt_add_qml_module(file-reader-qt
         QML_FILES qml/components/HistogramBar.qml
         QML_FILES qml/views/MainView.qml
         SOURCES
+        SOURCES src/wordscounterworker.h src/wordscounterworker.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.

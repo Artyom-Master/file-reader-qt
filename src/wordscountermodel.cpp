@@ -1,10 +1,5 @@
 #include "wordscountermodel.h"
 
-namespace
-{
-    constexpr int COUNT_OF_MOST_FREQUENT_WORDS_IN_FILE{ 15 };
-}
-
 WordsCounterModel::WordsCounterModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_topFrequentWordsList{}
