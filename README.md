@@ -17,17 +17,18 @@ There is schematic structure of project directory:
 ```
 file-reader-qt/
 ├── src/
+│   ├── controller.h/.cpp         # Manages worker thread, controls start/pause/cancel
+│   ├── filereaderworker.h/.cpp   # Worker class for file reading
 │   ├── main.cpp                  # Setup QML engine, register C++ types
-│   ├── filereaderworker.h/.cpp   # Worker object for file reading and word counting
-│   ├── wordstatsmodel.h/.cpp     # QAbstractListModel to expose word statistics to QML
-│   └── controller.h/.cpp         # Manages worker thread, controls start/pause/cancel
+│   ├── wordscountermodel.h/.cpp  # QAbstractListModel to expose word statistics to QML
+│   └── wordscounterworker.h/.cpp # Worker class for counting top n frequent words
 ├── qml/
-│   ├── Main.qml                  # Root UI
 │   ├── components/
-│   │   ├── HistogramBar.qml      # One bar in the histogram
+│   │   ├── HistogramBar.qml      # Bar Item of the histogram
 │   │   └── HistogramView.qml     # Full histogram view
-│   └── views/
-│       └── MainView.qml          # Main window with histogram, progress bar and buttons
+│   ├── views/
+│   │   └── MainView.qml          # Main window with histogram, progress bar and buttons
+│   └── Main.qml                  # Root UI
 ├── tests/                        # cpp unit tests
 ├── README.md                     # Architecture, setup, logic
 ├── CMakeLists.txt
@@ -56,20 +57,14 @@ Build process should be standard as for any other Qt app developed in environmen
 ## MVC
 
 All app logic divided into: 
-- **Model** (FileReaderWorker.cpp)
-- **View** (MainView.qml, HistogramBar.qml, HistogramView.qml)
-- **Controller** (Controller.cpp)
+- **Model** (FileReaderWorker, WordsCounterWorker, WordsCounterModel)
+- **View** (MainView, HistogramBar, HistogramView)
+- **Controller** (Controller)
 
 <br/>
 
-1. FileReaderWorker is responsible for data processing and storing in appropriate format
-2. MainView.qml, HistogramBar.qml, HistogramView.qml and WordStatsModel.cpp are responsible for correct displaying of data model and user interface
-3. Controller.cpp converts user input from **View** to commands for **Model** 
-
-<br/>
-
-*I added WordStatsModel to **View** because it works in GUI thread and data for displaying is gotten by it from FileReaderWorker when it should be displayed*
-
-<br/>
+1. FileReaderWorker, WordsCounterWorker are responsible for data processing, WordsCounterModel - storing processed data in appropriate format
+2. MainView, HistogramBar, HistogramView are responsible for correct displaying of processed data and user interface
+3. Controller converts user input from **View** to commands for **Model** 
 
 **_ADD HERE_**
