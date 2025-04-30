@@ -20,7 +20,7 @@ ColumnLayout {
     Components.HistogramView {}
 
     Text {
-        text: qsTr(wordStatsModel.statusInfoText)
+        text: qsTr(wordsCounterModel.statusInfoText)
         font.pixelSize: variableTextSize
     }
 
@@ -31,7 +31,7 @@ ColumnLayout {
         implicitHeight: variableItemSize
         from: 0
         to: 100
-        value: wordStatsModel.countProgress  // Bind this to a property that updates with processing progress
+        value: wordsCounterModel.countProgress  // Bind this to a property that updates with processing progress
     }
 
     // Control Buttons

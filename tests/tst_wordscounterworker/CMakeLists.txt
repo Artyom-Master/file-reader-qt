@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(tst_wordstatsmodel LANGUAGES CXX)
+project(tst_wordscounterworker LANGUAGES CXX)
 
 enable_testing()
 
@@ -16,9 +16,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(../../src/)
 
-add_executable(tst_wordstatsmodel tst_wordstatsmodel.cpp
-    ../../src/wordstatsmodel.cpp)
-add_test(NAME tst_wordstatsmodel COMMAND tst_wordstatsmodel)
+add_executable(tst_wordscounterworker tst_wordscounterworker.cpp
+    ../../src/wordscounterworker.cpp)
+add_test(NAME tst_wordscounterworker COMMAND tst_wordscounterworker)
 
-target_link_libraries(tst_wordstatsmodel PRIVATE Qt${QT_VERSION_MAJOR}::Test)
+target_link_libraries(tst_wordscounterworker PRIVATE Qt${QT_VERSION_MAJOR}::Test)
 

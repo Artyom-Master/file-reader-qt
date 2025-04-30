@@ -6,9 +6,9 @@
 class Controller : public QObject
 {
     Q_OBJECT
+
     Q_PROPERTY(bool canPause READ canPause WRITE setCanPause NOTIFY canPauseChanged)
     Q_PROPERTY(bool canCancel READ canCancel WRITE setCanCancel NOTIFY canCancelChanged)
-
 
 public:
     explicit Controller(QObject *parent = nullptr);

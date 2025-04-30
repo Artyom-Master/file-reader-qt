@@ -2,7 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include "Controller.h"
-#include "WordStatsModel.h"
+#include "wordscountermodel.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -35,12 +35,12 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_QtQuickUseDefaultSizePolicy);
 
     Controller controller;
-    WordStatsModel wordStatsModel;
+    WordsCounterModel wordsCounterModel;
 
     QQmlApplicationEngine engine;
 
     engine.rootContext()->setContextProperty("controller", &controller);
-    engine.rootContext()->setContextProperty("wordStatsModel", &wordStatsModel);
+    engine.rootContext()->setContextProperty("wordsCounterModel", &wordsCounterModel);
 
     const QUrl url(QStringLiteral("qrc:/file-reader-qt/qml/Main.qml"));
     QObject::connect(

@@ -7,6 +7,7 @@
 class FileReaderWorker : public QObject
 {
     Q_OBJECT
+
 public:
     explicit FileReaderWorker(QObject *parent = nullptr);
 
@@ -16,7 +17,7 @@ public slots:
 
 signals:
     void fileOpened();
-    void wordRead(const QString &line);
+    void wordRead(QString word);
     void finished();
     void errorOccurred(const QString &error);
 
