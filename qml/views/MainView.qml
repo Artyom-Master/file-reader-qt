@@ -17,7 +17,18 @@ ColumnLayout {
     anchors.margins: variableMarginSize
 
     //Histogram View
-    Components.HistogramView {}
+    Components.HistogramView {
+        id: histogramView
+
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+        Layout.minimumWidth: wordsCounterModel.length > 0
+                             ? (histogramView.barMinimumWidth * wordsCounterModel.length
+                                + (wordsCounterModel.length - 1) * variableMarginSize
+                                + variableMarginSize * 4)
+                             : 200
+        Layout.minimumHeight: 200
+    }
 
     Text {
         text: qsTr(wordsCounterModel.statusInfoText)
@@ -72,6 +83,10 @@ ColumnLayout {
         id: fileDialog
         title: qsTr("Select a Text File")
         nameFilters: ["Text Files (*.txt)", "All Files (*)"]
-        onAccepted: controller.setFilePath(fileDialog.fileUrl)  // Assumes 'setFilePath' method in controller
+        onAccepted:
+        {
+            console.log("File url you chose: " + selectedFile)
+            controller.openFile(selectedFile)  // Assumes 'openFile' method in controller
+        }
     }
 }

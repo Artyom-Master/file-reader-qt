@@ -4,25 +4,37 @@ import QtQuick.Layouts
 // Histogram Area
 Rectangle {
     id: histogramArea
-    Layout.fillWidth: true
-    Layout.fillHeight: true
+
+    property int barMinimumWidth: 30
+
     color: "#f0f0f0"
     border.color: "#cccccc"
     border.width: 1
 
-    Row {
+    RowLayout {
         id: histogramRow
         anchors.fill: parent
         anchors.margins: variableMarginSize * 2
         spacing: variableMarginSize
 
         Repeater {
-            model: wordsCounterModel  // Assumes wordModel is a ListModel with 'word' and 'count' roles
+            id: histogramRepeater
 
-            delegate: HistogramBar {
-                count: wordCount
-                maxCount: maxWordCount
-                word: wordValue
+            model: wordsCounterModel
+
+            HistogramBar {
+                barWord: word
+                barCount: count
+                barMaxCount: maxWordCount
+
+                Layout.fillWidth: true
+                Layout.minimumWidth: histogramArea.barMinimumWidth
+                Layout.preferredWidth: 0
+
+                //Layout.fillHeight: true
+
+                //Layout.preferredWidth: histogramArea.width / wordsCounterModel.count
+                Layout.preferredHeight: histogramArea.height
             }
         }
     }

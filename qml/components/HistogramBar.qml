@@ -1,25 +1,41 @@
 import QtQuick
+import QtQuick.Layouts
 
-Column {
-    width: variableItemSize
-    height: parent.height
+ColumnLayout {
+    id: root
 
-    property int count
-    property int maxCount
-    property string word
+    property int barCount
+    property int barMaxCount
+    property string barWord
+
+    // spacer pushes the bar down
+    Item { Layout.fillHeight: true }
 
     Rectangle {
-        width: parent.width
-        height: (count / maxCount) * parent.height  // maxCount should be the highest count value
+        Layout.fillWidth: true
+        Layout.preferredHeight: barMaxCount > 0
+            ? (barCount / barMaxCount) * (root.Layout.preferredHeight * 0.7)
+            : 0
         color: "#3498db"
-        anchors.verticalCenter: parent.verticalCenter
+
+        Text {
+            text: barCount
+            font.pixelSize: variableTextSize
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            horizontalAlignment: Text.AlignHCenter
+            //Layout.alignment: Qt.AlignCenter
+        }
     }
 
     Text {
-        text: word
+        text: barWord
         font.pixelSize: variableTextSize
         horizontalAlignment: Text.AlignHCenter
-        width: parent.width
-        wrapMode: Text.Wrap
+        Layout.alignment: Qt.AlignHCenter
+        //wrapMode: Text.WordWrap
+        elide: Text.ElideRight
+        Layout.fillWidth: true
+        //width: root.width
     }
 }

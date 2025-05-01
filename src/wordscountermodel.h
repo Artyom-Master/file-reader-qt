@@ -9,11 +9,13 @@ class WordsCounterModel : public QAbstractListModel
 
     Q_PROPERTY(int countProgress READ countProgress WRITE setCountProgress NOTIFY countProgressChanged)
     Q_PROPERTY(QString statusInfoText READ statusInfoText WRITE setStatusInfoText NOTIFY statusInfoTextChanged)
+    Q_PROPERTY(int length READ length WRITE setLength NOTIFY lengthChanged)
 
 public:
     enum WordRoles {
         WordRole = Qt::UserRole + 1,
-        CountRole
+        CountRole,
+        MaxWordCountRole
     };
 
     explicit WordsCounterModel(QObject *parent = nullptr);
@@ -34,28 +36,39 @@ public:
         }
     }
 
+    int length() const { return m_length; }
+    void setLength(const int length) {
+        if (m_length != length) {
+            m_length = length;
+            emit lengthChanged();
+        }
+    }
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
 public slots:
-    void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList);
+    void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
     void resetModel();
 
 signals:
     void countProgressChanged();
     void statusInfoTextChanged();
+    void lengthChanged();
 
 private:
     struct WordEntry {
         QString word;
-        int count;
+        int count{};
+        int maxWordCount{};
     };
 
     QList<WordEntry> m_topFrequentWordsList;
 
     int m_countProgress;
     QString m_statusInfoText;
+    int m_length;
 };
 
 #endif // WORDSCOUNTERMODEL_H
