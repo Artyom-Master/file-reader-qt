@@ -30,10 +30,6 @@ Rectangle {
                 Layout.fillWidth: true
                 Layout.minimumWidth: histogramArea.barMinimumWidth
                 Layout.preferredWidth: 0
-
-                //Layout.fillHeight: true
-
-                //Layout.preferredWidth: histogramArea.width / wordsCounterModel.count
                 Layout.preferredHeight: histogramArea.height
             }
         }
