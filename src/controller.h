@@ -84,7 +84,7 @@ signals:
     void openFileSignal(const QString& fileUrl);
     void readFileSignal();
 
-    void startCountOfReadWords(QStringList readWords);
+    void startCountOfReadWords(QStringList readWords, int readingProgress);
     void finishWordsCounterWorker();
 
     void clearHistogramData();

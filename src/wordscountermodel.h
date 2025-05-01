@@ -21,7 +21,7 @@ public:
     explicit WordsCounterModel(QObject *parent = nullptr);
 
     int countProgress() const { return m_countProgress; }
-    void setCountProgress(const int countProgress) {
+    void setCountProgress(int countProgress) {
         if (m_countProgress != countProgress) {
             m_countProgress = countProgress;
             emit countProgressChanged();
@@ -37,7 +37,7 @@ public:
     }
 
     int length() const { return m_length; }
-    void setLength(const int length) {
+    void setLength(int length) {
         if (m_length != length) {
             m_length = length;
             emit lengthChanged();
@@ -49,7 +49,7 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 public slots:
-    void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
+    void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int currentReadingProgress);
     void clearData();
 
 signals:

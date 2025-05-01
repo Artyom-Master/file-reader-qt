@@ -15,13 +15,19 @@ FileReaderWorker::FileReaderWorker(QObject *parent)
 
 }
 
-QStringList FileReaderWorker::getReadWords()
+FileReasingProgress FileReaderWorker::getReadWords()
 {
     std::shared_lock lock(m_readWordsMutex);
     auto readWords = m_readWords;
     m_readWords.clear();
 
-    return readWords;
+    double readingProgress{ m_currentFile.pos() / static_cast<double>(m_currentFile.size()) };
+    qDebug() << QString("Current progress: %1 / %2 = %3").arg(m_currentFile.pos()).arg(m_currentFile.size()).arg(readingProgress * 100);
+
+    return {
+            .readWords = readWords
+            , .readingProgress = m_currentFile.isOpen() ? static_cast<int>(readingProgress * 100) : 100
+    };
 }
 
 void FileReaderWorker::openFile(const QString &filePath)
