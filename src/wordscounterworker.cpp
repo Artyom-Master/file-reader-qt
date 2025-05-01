@@ -14,7 +14,7 @@ WordsCounterWorker::WordsCounterWorker(QObject *parent)
 
 }
 
-void WordsCounterWorker::updateTopFrequentWordsList(QStringList words)
+void WordsCounterWorker::updateDataAndStart(QStringList words)
 {
     if(words.isEmpty())
     {
@@ -29,23 +29,23 @@ void WordsCounterWorker::updateTopFrequentWordsList(QStringList words)
         ++m_countedWordsMap[word];
     }
 
-    recalculateTopFrequentWordsList();
+    qInfo() << "Start search of top n frequent words";
+    run();
+    qInfo() << "Finish search of top n frequent words";
 }
 
-void WordsCounterWorker::resetCountedWordsMap()
+void WordsCounterWorker::finishWork()
 {
-    qInfo() << "Reset countedWordsMap";
-    m_countedWordsMap.clear();
+    clearData();
+    emit finished();
 }
 
-void WordsCounterWorker::recalculateTopFrequentWordsList()
-{   
+void WordsCounterWorker::run()
+{
     // Min-heap to keep top n elements
     using Pair = std::pair<QString, int>;
     auto cmp = [](const Pair& a, const Pair& b) { return a.second > b.second; };
     std::priority_queue<Pair, std::vector<Pair>, decltype(cmp)> heap(cmp);
-
-    qInfo() << "Start search of top n frequent words";
 
     for (const auto& [word, count] : m_countedWordsMap)
     {
@@ -55,6 +55,15 @@ void WordsCounterWorker::recalculateTopFrequentWordsList()
         {
             heap.pop();
         }
+
+        if(m_canceled)
+        {
+            m_canceled = false;
+            finishWork();
+            return;
+        }
+
+        callCVWait();
     }
 
     qDebug() << "Convert top n frequent words priority_queue to vector";
@@ -68,8 +77,23 @@ void WordsCounterWorker::recalculateTopFrequentWordsList()
         maxWordCount = std::max(maxWordCount, heap.top().second);
         result.emplace_back(heap.top().first, heap.top().second);
         heap.pop();
+
+        if(m_canceled)
+        {
+            m_canceled = false;
+            finishWork();
+            return;
+        }
+
+        callCVWait();
     }
 
-    qInfo() << "Send fount top of words to model";
-    emit topFrequentWordsListRecalculated(result, maxWordCount);
+    qDebug() << "Send found top of words to model";
+    emit updatedTopFrequentWordsList(result, maxWordCount);
+}
+
+void WordsCounterWorker::clearData()
+{
+    qDebug() << "Reset countedWordsMap";
+    m_countedWordsMap.clear();
 }

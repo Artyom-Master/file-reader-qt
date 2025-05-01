@@ -7,8 +7,10 @@
 
 FileReaderWorker::FileReaderWorker(QObject *parent)
     : QObject{parent}
+    , AbstractWorker{}
     , m_currentFile{}
     , m_readWords{}
+    , m_readWordsMutex{}
 {
 
 }
@@ -43,7 +45,7 @@ void FileReaderWorker::openFile(const QString &filePath)
     emit fileOpened();
 }
 
-void FileReaderWorker::readFile()
+void FileReaderWorker::start()
 {
     if(!m_currentFile.isOpen())
     {
@@ -53,12 +55,28 @@ void FileReaderWorker::readFile()
         return;
     }
 
+    qInfo() << QString("Start reading file %1").arg(m_currentFile.fileName());
+    run();
+    qInfo() << QString("Finish reading file %1").arg(m_currentFile.fileName());
+
+    m_currentFile.close();
+
+    if(!m_canceled)
+    {
+        emit finished();
+    }
+    else
+    {
+        m_canceled = false;
+    }
+}
+
+void FileReaderWorker::run()
+{
     QTextStream inStream(&m_currentFile);
     QString word;
 
-    qInfo() << QString("Start reading file %1").arg(m_currentFile.fileName());
-
-    while (!inStream.atEnd())
+    while (!m_canceled && !inStream.atEnd())
     {
         inStream >> word;
         if (!word.isEmpty())
@@ -66,9 +84,7 @@ void FileReaderWorker::readFile()
             std::unique_lock lock(m_readWordsMutex);
             m_readWords.append(word);
         }
-    }
 
-    qInfo() << QString("Finish reading file %1").arg(m_currentFile.fileName());
-    m_currentFile.close();
-    emit finished();
+        callCVWait();
+    }
 }
