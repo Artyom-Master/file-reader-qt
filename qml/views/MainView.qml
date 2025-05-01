@@ -30,6 +30,7 @@ ColumnLayout {
         Layout.minimumHeight: 200
     }
 
+    //Status info
     Text {
         text: qsTr(wordsCounterModel.statusInfoText)
         font.pixelSize: variableTextSize
@@ -52,29 +53,31 @@ ColumnLayout {
         spacing: variableMarginSize
 
         Button {
-            text: qsTr("Open")
+            text: qsTr("Open file")
             font.pixelSize: variableTextSize
             onClicked: fileDialog.open()
+            enabled: controller.canOpenFile
         }
 
         Button {
             text: qsTr("Start")
             font.pixelSize: variableTextSize
-            onClicked: controller.startProcessing()  // Assumes 'controller' is a context property with this method
+            onClicked: controller.startProcessing()
+            enabled: controller.canStart
         }
 
         Button {
             text: qsTr("Pause")
             font.pixelSize: variableTextSize
             onClicked: controller.pauseProcessing()
-            enabled: controller.canPause  // Assumes 'canPause' is a property indicating pause capability
+            enabled: controller.canPause
         }
 
         Button {
             text: qsTr("Cancel")
             font.pixelSize: variableTextSize
             onClicked: controller.cancelProcessing()
-            enabled: controller.canCancel  // Assumes 'canCancel' is a property indicating cancel capability
+            enabled: controller.canCancel
         }
     }
 
@@ -86,7 +89,7 @@ ColumnLayout {
         onAccepted:
         {
             console.log("File url you chose: " + selectedFile)
-            controller.openFile(selectedFile)  // Assumes 'openFile' method in controller
+            controller.openFile(selectedFile)
         }
     }
 }

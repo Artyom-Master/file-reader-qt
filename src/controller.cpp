@@ -7,6 +7,8 @@ constexpr int INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS{ 33 };
 
 Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterModel, QObject *parent)
     : QObject{parent}
+    , m_canOpenFile{ true }
+    , m_canStart{ false }
     , m_canPause{ false }
     , m_canCancel{ false }
 
@@ -22,6 +24,7 @@ Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterMod
     //Setup FileReaderWorker
     connect(this, &Controller::openFileSignal, &m_fileReaderWorker, &FileReaderWorker::openFile);
     connect(this, &Controller::readFileSignal, &m_fileReaderWorker, &FileReaderWorker::readFile);
+    connect(&m_fileReaderWorker, &FileReaderWorker::fileOpened, this, [this](){ setCanStart(true); });
     connect(&m_fileReaderWorker, &FileReaderWorker::finished, this, &Controller::finishProcessing);
 
     m_fileReaderWorker.moveToThread(&m_fileReaderWorkerThread);
@@ -64,6 +67,11 @@ void Controller::startProcessing()
 
     m_getReadWordsTimer.start(INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS);
     emit readFileSignal();
+
+    setCanOpenFile(false);
+    setCanStart(false);
+    setCanPause(true);
+    setCanCancel(true);
 }
 
 void Controller::pauseProcessing()
@@ -84,6 +92,11 @@ void Controller::updateTopFrequentWordsHistogram()
 
 void Controller::finishProcessing()
 {
+    setCanOpenFile(true);
+    setCanStart(false);
+    setCanPause(false);
+    setCanCancel(false);
+
     m_getReadWordsTimer.stop();
     updateTopFrequentWordsHistogram();
 }
