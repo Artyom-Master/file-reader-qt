@@ -18,6 +18,7 @@ class Controller : public QObject
     Q_PROPERTY(bool canStart READ canStart WRITE setCanStart NOTIFY canStartChanged)
     Q_PROPERTY(bool canPause READ canPause WRITE setCanPause NOTIFY canPauseChanged)
     Q_PROPERTY(bool canCancel READ canCancel WRITE setCanCancel NOTIFY canCancelChanged)
+    Q_PROPERTY(QString pauseButtonText READ pauseButtonText WRITE setPauseButtonText NOTIFY pauseButtonTextChanged)
 
 public:
     explicit Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterModel, QObject *parent = nullptr);
@@ -55,13 +56,21 @@ public:
         }
     }
 
+    QString pauseButtonText() const { return m_pauseButtonText; }
+    void setPauseButtonText(const QString& pauseButtonText) {
+        if (m_pauseButtonText != pauseButtonText) {
+            m_pauseButtonText = pauseButtonText;
+            emit pauseButtonTextChanged();
+        }
+    }
+
 public slots:
     void openFile(const QUrl& fileUrl);
+    void updateTopFrequentWordsHistogram();
+
     void startProcessing();
     void pauseProcessing();
     void cancelProcessing();
-
-    void updateTopFrequentWordsHistogram();
     void finishProcessing();
 
 
@@ -70,17 +79,22 @@ signals:
     void canStartChanged();
     void canPauseChanged();
     void canCancelChanged();
+    void pauseButtonTextChanged();
 
     void openFileSignal(const QString& fileUrl);
     void readFileSignal();
 
     void startCountOfReadWords(QStringList readWords);
+    void finishWordsCounterWorker();
+
+    void clearHistogramData();
 
 private:
     bool m_canOpenFile;
     bool m_canStart;
     bool m_canPause;
     bool m_canCancel;
+    QString m_pauseButtonText;
 
     QThread m_fileReaderWorkerThread;
     QThread m_wordsCounterWorkerThread;
@@ -89,7 +103,6 @@ private:
     WordsCounterWorker m_wordsCounterWorker;
 
     std::shared_ptr<WordsCounterModel> m_wordsCounterModel;
-
     QTimer m_getReadWordsTimer;
 };
 

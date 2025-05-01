@@ -8,7 +8,9 @@ WordsCounterModel::WordsCounterModel(QObject *parent)
     , m_countProgress{ 0 }
     , m_statusInfoText{"Open any text file"}
     , m_length{ 0 }
-{}
+{
+
+}
 
 int WordsCounterModel::rowCount(const QModelIndex &parent) const
 {
@@ -69,7 +71,7 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
         maxWordCount = 1;
     }
 
-    resetModel();
+    clearData();
     qInfo() << "Start insertion of new wordsList in model";
 
     beginInsertRows(QModelIndex(), 0, currentList.size() - 1);
@@ -87,7 +89,7 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
     //QCoreApplication::processEvents();
 }
 
-void WordsCounterModel::resetModel()
+void WordsCounterModel::clearData()
 {
     qInfo() << "Reset model";
 

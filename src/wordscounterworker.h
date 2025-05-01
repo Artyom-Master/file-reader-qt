@@ -3,21 +3,26 @@
 
 #include <QObject>
 
-class WordsCounterWorker : public QObject
+#include "abstractworker/abstractworker.h"
+
+class WordsCounterWorker : public QObject, public AbstractWorker
 {
     Q_OBJECT
 public:
     explicit WordsCounterWorker(QObject *parent = nullptr);
 
 public slots:
-    void updateTopFrequentWordsList(QStringList words);
-    void resetCountedWordsMap();
-    void recalculateTopFrequentWordsList();
+    void updateDataAndStart(QStringList words);
+    void finishWork();
 
 signals:
-    void topFrequentWordsListRecalculated(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
+    void finished();
+    void updatedTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
 
 private:
+    void run() override;
+    void clearData();
+
     std::unordered_map<QString, int> m_countedWordsMap;
 };
 

@@ -50,7 +50,7 @@ public:
 
 public slots:
     void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
-    void resetModel();
+    void clearData();
 
 signals:
     void countProgressChanged();

@@ -67,7 +67,7 @@ ColumnLayout {
         }
 
         Button {
-            text: qsTr("Pause")
+            text: qsTr(controller.pauseButtonText)
             font.pixelSize: variableTextSize
             onClicked: controller.pauseProcessing()
             enabled: controller.canPause

@@ -11,6 +11,7 @@ Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterMod
     , m_canStart{ false }
     , m_canPause{ false }
     , m_canCancel{ false }
+    , m_pauseButtonText{ "Pause" }
 
     , m_fileReaderWorkerThread{}
     , m_wordsCounterWorkerThread{}
@@ -20,19 +21,29 @@ Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterMod
 
     , m_wordsCounterModel{ wordsCounterModel }
     , m_getReadWordsTimer{}
-{
+{   
     //Setup FileReaderWorker
     connect(this, &Controller::openFileSignal, &m_fileReaderWorker, &FileReaderWorker::openFile);
-    connect(this, &Controller::readFileSignal, &m_fileReaderWorker, &FileReaderWorker::readFile);
-    connect(&m_fileReaderWorker, &FileReaderWorker::fileOpened, this, [this](){ setCanStart(true); });
-    connect(&m_fileReaderWorker, &FileReaderWorker::finished, this, &Controller::finishProcessing);
+    connect(this, &Controller::readFileSignal, &m_fileReaderWorker, &FileReaderWorker::start);
+    connect(&m_fileReaderWorker, &FileReaderWorker::fileOpened, this, [this](){
+        emit clearHistogramData();
+        setCanStart(true);
+    });
+    connect(&m_fileReaderWorker, &FileReaderWorker::finished, this, [this](){
+        m_getReadWordsTimer.stop();
+        updateTopFrequentWordsHistogram();
+        emit finishWordsCounterWorker();
+    });
 
     m_fileReaderWorker.moveToThread(&m_fileReaderWorkerThread);
     m_fileReaderWorkerThread.start();
 
-    //Setup WordsCounterWorker
-    connect(this, &Controller::startCountOfReadWords, &m_wordsCounterWorker, &WordsCounterWorker::updateTopFrequentWordsList);
-    connect(&m_wordsCounterWorker, &WordsCounterWorker::topFrequentWordsListRecalculated, m_wordsCounterModel.get(), &WordsCounterModel::setTopFrequentWordsList);
+    //Setup WordsCounterWorker and WordsCounterModel
+    connect(this, &Controller::startCountOfReadWords, &m_wordsCounterWorker, &WordsCounterWorker::updateDataAndStart);
+    connect(this, &Controller::finishWordsCounterWorker, &m_wordsCounterWorker, &WordsCounterWorker::finishWork);
+    connect(&m_wordsCounterWorker, &WordsCounterWorker::updatedTopFrequentWordsList, m_wordsCounterModel.get(), &WordsCounterModel::setTopFrequentWordsList);
+    connect(&m_wordsCounterWorker, &WordsCounterWorker::finished, this, &Controller::finishProcessing);
+    connect(this, &Controller::clearHistogramData, m_wordsCounterModel.get(), &WordsCounterModel::clearData);
 
     m_wordsCounterWorker.moveToThread(&m_wordsCounterWorkerThread);
     m_wordsCounterWorkerThread.start();
@@ -61,6 +72,12 @@ void Controller::openFile(const QUrl& fileUrl)
     }
 }
 
+void Controller::updateTopFrequentWordsHistogram()
+{
+    auto readWords = m_fileReaderWorker.getReadWords();
+    emit startCountOfReadWords(readWords);
+}
+
 void Controller::startProcessing()
 {
     qInfo() << "Start button clicked";
@@ -76,18 +93,35 @@ void Controller::startProcessing()
 
 void Controller::pauseProcessing()
 {
+    if(m_pauseButtonText == "Pause")
+    {
+        m_fileReaderWorker.pause();
+        m_getReadWordsTimer.stop();
+        m_wordsCounterWorker.pause();
 
+        setPauseButtonText("Continue");
+    }
+    else
+    {
+        m_fileReaderWorker.resume();
+        m_wordsCounterWorker.resume();
+        m_getReadWordsTimer.start(INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS);
+
+        setPauseButtonText("Pause");
+    }
 }
 
 void Controller::cancelProcessing()
 {
-    m_fileReaderWorker.cancelFileReading();
-}
+    m_getReadWordsTimer.stop();
 
-void Controller::updateTopFrequentWordsHistogram()
-{
-    auto readWords = m_fileReaderWorker.getReadWords();
-    emit startCountOfReadWords(readWords);
+    m_fileReaderWorker.resume();
+    m_fileReaderWorker.cancel();
+
+    m_wordsCounterWorker.resume();
+    m_wordsCounterWorker.cancel();
+
+    emit clearHistogramData();
 }
 
 void Controller::finishProcessing()
@@ -96,7 +130,4 @@ void Controller::finishProcessing()
     setCanStart(false);
     setCanPause(false);
     setCanCancel(false);
-
-    m_getReadWordsTimer.stop();
-    updateTopFrequentWordsHistogram();
 }
