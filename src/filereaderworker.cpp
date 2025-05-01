@@ -9,6 +9,7 @@ FileReaderWorker::FileReaderWorker(QObject *parent)
     : QObject{parent}
     , m_currentFile{}
     , m_readWords{}
+    , m_cancelFileReading{ false }
 {
 
 }
@@ -58,7 +59,7 @@ void FileReaderWorker::readFile()
 
     qInfo() << QString("Start reading file %1").arg(m_currentFile.fileName());
 
-    while (!inStream.atEnd())
+    while (!inStream.atEnd() && !m_cancelFileReading)
     {
         inStream >> word;
         if (!word.isEmpty())
@@ -71,4 +72,9 @@ void FileReaderWorker::readFile()
     qInfo() << QString("Finish reading file %1").arg(m_currentFile.fileName());
     m_currentFile.close();
     emit finished();
+}
+
+void FileReaderWorker::cancelFileReading()
+{
+    m_cancelFileReading = true;
 }

@@ -5,6 +5,7 @@
 #include <QFile>
 
 #include <shared_mutex>
+#include <atomic>
 
 class FileReaderWorker : public QObject
 {
@@ -18,6 +19,7 @@ public:
 public slots:
     void openFile(const QString &filePath);
     void readFile();
+    void cancelFileReading();
 
 signals:
     void fileOpened();
@@ -29,6 +31,7 @@ private:
     QStringList m_readWords;
 
     std::shared_mutex m_readWordsMutex;
+    std::atomic<bool> m_cancelFileReading;
 };
 
 #endif // FILEREADERWORKER_H

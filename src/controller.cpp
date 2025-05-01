@@ -81,7 +81,7 @@ void Controller::pauseProcessing()
 
 void Controller::cancelProcessing()
 {
-
+    m_fileReaderWorker.cancelFileReading();
 }
 
 void Controller::updateTopFrequentWordsHistogram()
