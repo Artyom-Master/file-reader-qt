@@ -28,7 +28,7 @@ public slots:
     void start();
 
 signals:
-    void fileOpened();
+    void fileOpened(const QString& openedFileName);
     void finished();
     void errorOccurred(const QString &error);
 

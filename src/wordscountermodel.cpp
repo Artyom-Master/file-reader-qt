@@ -6,7 +6,7 @@ WordsCounterModel::WordsCounterModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_topFrequentWordsList{}
     , m_countProgress{ 0 }
-    , m_statusInfoText{"Open any text file"}
+    , m_statusInfoText{"Open any text file."}
     , m_length{ 0 }
 {
 
@@ -85,6 +85,7 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
 
     setLength(m_topFrequentWordsList.count());
     setCountProgress(currentReadingProgress);
+    setStatusInfoText(QString("Progress of words counting: %1%.").arg(currentReadingProgress));
 
     qInfo() << "Finish insertion of new wordsList in model";
     //QCoreApplication::processEvents();

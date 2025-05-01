@@ -2,6 +2,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
+#include <QFileInfo>
 
 #include <mutex>
 
@@ -34,7 +35,7 @@ void FileReaderWorker::openFile(const QString &filePath)
 {
     if(m_currentFile.isOpen())
     {
-        qInfo() << QString("File %1 is closed before opening new file").arg(m_currentFile.fileName());
+        qDebug() << QString("File %1 is closed before opening new file").arg(m_currentFile.fileName());
         m_currentFile.close();
     }
 
@@ -48,7 +49,7 @@ void FileReaderWorker::openFile(const QString &filePath)
     }
 
     qInfo() << QString("Opened file %1").arg(filePath);
-    emit fileOpened();
+    emit fileOpened(QFileInfo(m_currentFile).fileName());
 }
 
 void FileReaderWorker::start()

@@ -25,8 +25,9 @@ Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterMod
     //Setup FileReaderWorker
     connect(this, &Controller::openFileSignal, &m_fileReaderWorker, &FileReaderWorker::openFile);
     connect(this, &Controller::readFileSignal, &m_fileReaderWorker, &FileReaderWorker::start);
-    connect(&m_fileReaderWorker, &FileReaderWorker::fileOpened, this, [this](){
+    connect(&m_fileReaderWorker, &FileReaderWorker::fileOpened, this, [this](const QString& openedFileName){
         emit clearHistogramData();
+        m_wordsCounterModel->setStatusInfoText(QString("File %1 is opened. You can start words counting.").arg(openedFileName));
         setCanStart(true);
     });
     connect(&m_fileReaderWorker, &FileReaderWorker::finished, this, [this](){
@@ -54,6 +55,8 @@ Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterMod
 
 Controller::~Controller()
 {
+    cancelProcessing();
+
     m_wordsCounterWorkerThread.quit();
     m_wordsCounterWorkerThread.wait(500);
 
@@ -85,6 +88,7 @@ void Controller::startProcessing()
     m_getReadWordsTimer.start(INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS);
     emit readFileSignal();
 
+    m_wordsCounterModel->setStatusInfoText(QString("Progress of words counting: %1%.").arg(0));
     setCanOpenFile(false);
     setCanStart(false);
     setCanPause(true);
@@ -100,6 +104,7 @@ void Controller::pauseProcessing()
         m_wordsCounterWorker.pause();
 
         setPauseButtonText("Continue");
+        m_wordsCounterModel->setStatusInfoText(QString("Words counting is paused(%1%). You can continue process or cancel it.").arg(m_wordsCounterModel->countProgress()));
     }
     else
     {
@@ -126,6 +131,7 @@ void Controller::cancelProcessing()
 
 void Controller::finishProcessing()
 {
+    m_wordsCounterModel->setStatusInfoText("Words counting finished. Open file to start new process.");
     setCanOpenFile(true);
     setCanStart(false);
     setCanPause(false);
