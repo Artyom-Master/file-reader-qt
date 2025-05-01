@@ -21,10 +21,9 @@ ColumnLayout {
         Text {
             text: barCount
             font.pixelSize: variableTextSize
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            anchors.fill: parent
+            verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            //Layout.alignment: Qt.AlignCenter
         }
     }
 
@@ -33,9 +32,7 @@ ColumnLayout {
         font.pixelSize: variableTextSize
         horizontalAlignment: Text.AlignHCenter
         Layout.alignment: Qt.AlignHCenter
-        //wrapMode: Text.WordWrap
         elide: Text.ElideRight
         Layout.fillWidth: true
-        //width: root.width
     }
 }
