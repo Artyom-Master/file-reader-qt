@@ -10,12 +10,18 @@ constexpr int COUNT_OF_MOST_FREQUENT_WORDS_IN_FILE{ 15 };
 WordsCounterWorker::WordsCounterWorker(QObject *parent)
     : QObject{parent}
     , m_countedWordsMap{}
+    , m_currentReadingProgress{ 0 }
 {
 
 }
 
-void WordsCounterWorker::updateDataAndStart(QStringList words)
+void WordsCounterWorker::updateDataAndStart(QStringList words, int readingProgress)
 {
+    if(readingProgress <= 100 && readingProgress >= 0 && readingProgress >= m_currentReadingProgress)
+    {
+        m_currentReadingProgress = readingProgress;
+    }
+
     if(words.isEmpty())
     {
         qDebug() << "Got empty words list";
@@ -89,11 +95,12 @@ void WordsCounterWorker::run()
     }
 
     qDebug() << "Send found top of words to model";
-    emit updatedTopFrequentWordsList(result, maxWordCount);
+    emit updatedTopFrequentWordsList(result, maxWordCount, m_currentReadingProgress);
 }
 
 void WordsCounterWorker::clearData()
 {
-    qDebug() << "Reset countedWordsMap";
+    qDebug() << "Reset countedWordsMap and reading progress";
+    m_currentReadingProgress = 0;
     m_countedWordsMap.clear();
 }

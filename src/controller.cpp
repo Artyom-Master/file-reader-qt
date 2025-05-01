@@ -2,7 +2,7 @@
 
 namespace
 {
-constexpr int INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS{ 33 };
+constexpr int INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS{ 50 };
 }
 
 Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterModel, QObject *parent)
@@ -75,7 +75,7 @@ void Controller::openFile(const QUrl& fileUrl)
 void Controller::updateTopFrequentWordsHistogram()
 {
     auto readWords = m_fileReaderWorker.getReadWords();
-    emit startCountOfReadWords(readWords);
+    emit startCountOfReadWords(readWords.readWords, readWords.readingProgress);
 }
 
 void Controller::startProcessing()

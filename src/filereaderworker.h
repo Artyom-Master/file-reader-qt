@@ -8,6 +8,12 @@
 
 #include "abstractworker/abstractworker.h"
 
+struct FileReasingProgress
+{
+    QStringList readWords;
+    int readingProgress{};
+};
+
 class FileReaderWorker : public QObject, public AbstractWorker
 {
     Q_OBJECT
@@ -15,7 +21,7 @@ class FileReaderWorker : public QObject, public AbstractWorker
 public:
     explicit FileReaderWorker(QObject *parent = nullptr);
 
-    QStringList getReadWords();
+    FileReasingProgress getReadWords();
 
 public slots:
     void openFile(const QString &filePath);

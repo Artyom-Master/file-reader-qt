@@ -64,7 +64,7 @@ QHash<int, QByteArray> WordsCounterModel::roleNames() const
     return roles;
 }
 
-void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount)
+void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int currentReadingProgress)
 {
     if(maxWordCount == 0)
     {
@@ -84,6 +84,7 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
     endInsertRows();
 
     setLength(m_topFrequentWordsList.count());
+    setCountProgress(currentReadingProgress);
 
     qInfo() << "Finish insertion of new wordsList in model";
     //QCoreApplication::processEvents();
@@ -98,4 +99,5 @@ void WordsCounterModel::clearData()
     endResetModel();
 
     setLength(0);
+    setCountProgress(0);
 }
