@@ -1,6 +1,5 @@
 #include "wordscountermodel.h"
 #include <QDebug>
-#include <QCoreApplication>
 
 WordsCounterModel::WordsCounterModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -88,7 +87,6 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
     setStatusInfoText(QString("Progress of words counting: %1%.").arg(currentReadingProgress));
 
     qInfo() << "Finish insertion of new wordsList in model";
-    //QCoreApplication::processEvents();
 }
 
 void WordsCounterModel::clearData()
