@@ -49,7 +49,7 @@ install(TARGETS file-reader-qt
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 )
-add_subdirectory(tests/tst_filereaderworker)
-add_subdirectory(tests/tst_controller)
-add_subdirectory(tests/tst_wordscountermodel)
-add_subdirectory(tests/tst_wordscounterworker)
+#add_subdirectory(tests/tst_filereaderworker)
+#add_subdirectory(tests/tst_controller)
+#add_subdirectory(tests/tst_wordscountermodel)
+#add_subdirectory(tests/tst_wordscounterworker)

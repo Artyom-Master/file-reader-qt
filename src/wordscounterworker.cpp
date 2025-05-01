@@ -14,18 +14,22 @@ WordsCounterWorker::WordsCounterWorker(QObject *parent)
 
 }
 
-void WordsCounterWorker::addWordToMap(QString word)
+void WordsCounterWorker::updateTopFrequentWordsList(QStringList words)
 {
-    if(word.isEmpty())
+    if(words.isEmpty())
     {
-        qDebug() << "Got empty word";
+        qDebug() << "Got empty words list";
         return;
     }
 
-    qDebug() << QString("Add word %1 to countedWordsMap").arg(word);
+    qDebug() << "Add words list to countedWordsMap";
 
-    ++m_countedWordsMap[word];
-    //recalculateTopFrequentWordsList();
+    for(const auto& word : words)
+    {
+        ++m_countedWordsMap[word];
+    }
+
+    recalculateTopFrequentWordsList();
 }
 
 void WordsCounterWorker::resetCountedWordsMap()

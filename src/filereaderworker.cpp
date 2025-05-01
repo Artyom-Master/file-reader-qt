@@ -3,11 +3,23 @@
 #include <QTextStream>
 #include <QDebug>
 
+#include <mutex>
+
 FileReaderWorker::FileReaderWorker(QObject *parent)
     : QObject{parent}
     , m_currentFile{}
+    , m_readWords{}
 {
 
+}
+
+QStringList FileReaderWorker::getReadWords()
+{
+    std::shared_lock lock(m_readWordsMutex);
+    auto readWords = m_readWords;
+    m_readWords.clear();
+
+    return readWords;
 }
 
 void FileReaderWorker::openFile(const QString &filePath)
@@ -44,13 +56,15 @@ void FileReaderWorker::readFile()
     QTextStream inStream(&m_currentFile);
     QString word;
 
+    qInfo() << QString("Start reading file %1").arg(m_currentFile.fileName());
+
     while (!inStream.atEnd())
     {
         inStream >> word;
         if (!word.isEmpty())
         {
-            qDebug() << QString("Read word %1").arg(word);
-            emit wordRead(word);
+            std::unique_lock lock(m_readWordsMutex);
+            m_readWords.append(word);
         }
     }
 

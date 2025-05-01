@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QThread>
 #include <QUrl>
+#include <QTimer>
 
 #include "filereaderworker.h"
 #include "wordscountermodel.h"
@@ -42,6 +43,8 @@ public slots:
     void pauseProcessing();
     void cancelProcessing();
 
+    void finishProcessing();
+
 
 signals:
     void canPauseChanged();
@@ -49,6 +52,8 @@ signals:
 
     void openFileSignal(const QString& fileUrl);
     void readFileSignal();
+
+    void startCountOfReadWords(QStringList readWords);
 
 private:
     bool m_canPause;
@@ -61,6 +66,8 @@ private:
     WordsCounterWorker m_wordsCounterWorker;
 
     std::shared_ptr<WordsCounterModel> m_wordsCounterModel;
+
+    QTimer m_getReadWordsTimer;
 };
 
 #endif // CONTROLLER_H

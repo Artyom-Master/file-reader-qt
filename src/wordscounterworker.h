@@ -10,7 +10,7 @@ public:
     explicit WordsCounterWorker(QObject *parent = nullptr);
 
 public slots:
-    void addWordToMap(QString word);
+    void updateTopFrequentWordsList(QStringList words);
     void resetCountedWordsMap();
     void recalculateTopFrequentWordsList();
 

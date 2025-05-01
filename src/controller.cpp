@@ -1,5 +1,10 @@
 #include "controller.h"
 
+namespace
+{
+constexpr int INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS{ 33 };
+}
+
 Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterModel, QObject *parent)
     : QObject{parent}
     , m_canPause{ false }
@@ -12,19 +17,25 @@ Controller::Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterMod
     , m_wordsCounterWorker{}
 
     , m_wordsCounterModel{ wordsCounterModel }
+    , m_getReadWordsTimer{}
 {
+    //Setup FileReaderWorker
     connect(this, &Controller::openFileSignal, &m_fileReaderWorker, &FileReaderWorker::openFile);
     connect(this, &Controller::readFileSignal, &m_fileReaderWorker, &FileReaderWorker::readFile);
+    connect(&m_fileReaderWorker, &FileReaderWorker::finished, this, &Controller::finishProcessing);
 
     m_fileReaderWorker.moveToThread(&m_fileReaderWorkerThread);
     m_fileReaderWorkerThread.start();
 
-    connect(&m_fileReaderWorker, &FileReaderWorker::wordRead, &m_wordsCounterWorker, &WordsCounterWorker::addWordToMap);
-    connect(&m_fileReaderWorker, &FileReaderWorker::finished, &m_wordsCounterWorker, &WordsCounterWorker::recalculateTopFrequentWordsList);
+    //Setup WordsCounterWorker
+    connect(this, &Controller::startCountOfReadWords, &m_wordsCounterWorker, &WordsCounterWorker::updateTopFrequentWordsList);
     connect(&m_wordsCounterWorker, &WordsCounterWorker::topFrequentWordsListRecalculated, m_wordsCounterModel.get(), &WordsCounterModel::setTopFrequentWordsList);
 
     m_wordsCounterWorker.moveToThread(&m_wordsCounterWorkerThread);
     m_wordsCounterWorkerThread.start();
+
+    //Setup m_getReadWordsTimer
+    connect(&m_getReadWordsTimer, &QTimer::timeout, this, &Controller::updateTopFrequentWordsHistogram);
 }
 
 Controller::~Controller()
@@ -51,6 +62,7 @@ void Controller::startProcessing()
 {
     qInfo() << "Start button clicked";
 
+    m_getReadWordsTimer.start(INTERVAL_BETWEEN_HISTOGRAM_UPDATES_MS);
     emit readFileSignal();
 }
 
@@ -62,4 +74,16 @@ void Controller::pauseProcessing()
 void Controller::cancelProcessing()
 {
 
+}
+
+void Controller::updateTopFrequentWordsHistogram()
+{
+    auto readWords = m_fileReaderWorker.getReadWords();
+    emit startCountOfReadWords(readWords);
+}
+
+void Controller::finishProcessing()
+{
+    m_getReadWordsTimer.stop();
+    updateTopFrequentWordsHistogram();
 }
