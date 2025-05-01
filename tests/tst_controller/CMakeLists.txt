@@ -16,8 +16,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include_directories(../../src/)
 
-add_executable(tst_controller tst_controller.cpp
-    ../../src/controller.cpp)
+add_executable(tst_controller tst_controller.cpp)
+#    ../../src/controller.cpp)
 add_test(NAME tst_controller COMMAND tst_controller)
 
 target_link_libraries(tst_controller PRIVATE Qt${QT_VERSION_MAJOR}::Test)

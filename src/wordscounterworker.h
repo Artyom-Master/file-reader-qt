@@ -12,13 +12,12 @@ public:
 public slots:
     void addWordToMap(QString word);
     void resetCountedWordsMap();
-
-signals:
-    void topFrequentWordsListRecalculated(std::vector<std::pair<QString, int>> currentList);
-
-private:
     void recalculateTopFrequentWordsList();
 
+signals:
+    void topFrequentWordsListRecalculated(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
+
+private:
     std::unordered_map<QString, int> m_countedWordsMap;
 };
 

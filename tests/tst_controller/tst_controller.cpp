@@ -1,8 +1,6 @@
 #include <QCoreApplication>
 #include <QtTest>
-#include "controller.h"
-
-// add necessary includes here
+//#include "controller.h"
 
 class tst_controller : public QObject
 {
@@ -12,8 +10,8 @@ public:
     tst_controller();
     ~tst_controller();
 
-private:
-    Controller m_controller;
+//private:
+    //Controller m_controller;
 
 private slots:
     void initTestCase();

@@ -12,9 +12,6 @@ public:
     tst_wordscountermodel();
     ~tst_wordscountermodel();
 
-private:
-    WordsCounterModel m_wordStatsModel;
-
 private slots:
     void initTestCase();
     void cleanupTestCase();
@@ -49,7 +46,7 @@ void tst_wordscountermodel::testSetTopFrequentWordsList()
         {"hello", 5},
         {"world", 3}
     };
-    model.setTopFrequentWordsList(words);
+    model.setTopFrequentWordsList(words, 5);
     QCOMPARE(model.rowCount(), static_cast<int>(words.size()));
     for (int i = 0; i < model.rowCount(); ++i) {
         QCOMPARE(model.data(model.index(i, 0), WordsCounterModel::WordRole).toString(), words[i].first);
@@ -64,7 +61,7 @@ void tst_wordscountermodel::testResetModel()
         {"hello", 5},
         {"world", 3}
     };
-    model.setTopFrequentWordsList(words);
+    model.setTopFrequentWordsList(words, 5);
     model.resetModel();
     QCOMPARE(model.rowCount(), 0);
     QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
@@ -76,7 +73,7 @@ void tst_wordscountermodel::testInvalidIndices()
     std::vector<std::pair<QString, int>> words = {
         {"hello", 5}
     };
-    model.setTopFrequentWordsList(words);
+    model.setTopFrequentWordsList(words, 5);
     QVERIFY(!model.data(model.index(-1, 0), WordsCounterModel::WordRole).isValid());
     QVERIFY(!model.data(model.index(1, 0), WordsCounterModel::WordRole).isValid());
 }
@@ -95,7 +92,7 @@ void tst_wordscountermodel::testEmptyInput()
 {
     WordsCounterModel model;
     std::vector<std::pair<QString, int>> emptyWords;
-    model.setTopFrequentWordsList(emptyWords);
+    model.setTopFrequentWordsList(emptyWords, 0);
     QCOMPARE(model.rowCount(), 0);
     QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
 }
