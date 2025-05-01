@@ -1,5 +1,6 @@
 #include "wordscounterworker.h"
 #include <queue>
+#include <QDebug>
 
 namespace
 {
@@ -17,24 +18,30 @@ void WordsCounterWorker::addWordToMap(QString word)
 {
     if(word.isEmpty())
     {
+        qDebug() << "Got empty word";
         return;
     }
 
+    qDebug() << QString("Add word %1 to countedWordsMap").arg(word);
+
     ++m_countedWordsMap[word];
-    recalculateTopFrequentWordsList();
+    //recalculateTopFrequentWordsList();
 }
 
 void WordsCounterWorker::resetCountedWordsMap()
 {
+    qInfo() << "Reset countedWordsMap";
     m_countedWordsMap.clear();
 }
 
 void WordsCounterWorker::recalculateTopFrequentWordsList()
-{
+{   
     // Min-heap to keep top n elements
     using Pair = std::pair<QString, int>;
     auto cmp = [](const Pair& a, const Pair& b) { return a.second > b.second; };
     std::priority_queue<Pair, std::vector<Pair>, decltype(cmp)> heap(cmp);
+
+    qInfo() << "Start search of top n frequent words";
 
     for (const auto& [word, count] : m_countedWordsMap)
     {
@@ -46,14 +53,19 @@ void WordsCounterWorker::recalculateTopFrequentWordsList()
         }
     }
 
+    qDebug() << "Convert top n frequent words priority_queue to vector";
+
     // Extract results
     std::vector<std::pair<QString, int>> result;
+    int maxWordCount = 0;
 
     while (!heap.empty())
     {
+        maxWordCount = std::max(maxWordCount, heap.top().second);
         result.emplace_back(heap.top().first, heap.top().second);
         heap.pop();
     }
 
-    emit topFrequentWordsListRecalculated(result);
+    qInfo() << "Send fount top of words to model";
+    emit topFrequentWordsListRecalculated(result, maxWordCount);
 }

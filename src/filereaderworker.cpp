@@ -14,6 +14,7 @@ void FileReaderWorker::openFile(const QString &filePath)
 {
     if(m_currentFile.isOpen())
     {
+        qInfo() << QString("File %1 is closed before opening new file").arg(m_currentFile.fileName());
         m_currentFile.close();
     }
 
@@ -34,6 +35,8 @@ void FileReaderWorker::readFile()
 {
     if(!m_currentFile.isOpen())
     {
+        qWarning() << "File is not opened, can't start reading";
+
         emit errorOccurred("File is not opened, nothing to read");
         return;
     }
@@ -46,10 +49,12 @@ void FileReaderWorker::readFile()
         inStream >> word;
         if (!word.isEmpty())
         {
+            qDebug() << QString("Read word %1").arg(word);
             emit wordRead(word);
         }
     }
 
+    qInfo() << QString("Finish reading file %1").arg(m_currentFile.fileName());
     m_currentFile.close();
     emit finished();
 }

@@ -35,6 +35,7 @@ void tst_wordscounterworker::testSingleWord()
     QSignalSpy spy(&worker, &WordsCounterWorker::topFrequentWordsListRecalculated);
 
     worker.addWordToMap("apple");
+    worker.recalculateTopFrequentWordsList();
 
     QVERIFY(spy.count() > 0);
     QList<QVariant> args = spy.takeLast();
@@ -53,6 +54,7 @@ void tst_wordscounterworker::testMultipleWords()
     worker.addWordToMap("banana");
     worker.addWordToMap("apple");
     worker.addWordToMap("banana");
+    worker.recalculateTopFrequentWordsList();
 
     QVERIFY(spy.count() > 0);
     QList<QVariant> args = spy.takeLast();
@@ -71,6 +73,8 @@ void tst_wordscounterworker::testWordFrequencies()
     QStringList words = {"a", "b", "a", "c", "b", "a", "d", "e", "d", "d"};
     for (const QString& word : words)
         worker.addWordToMap(word);
+
+    worker.recalculateTopFrequentWordsList();
 
     QVERIFY(spy.count() > 0);
     QList<QVariant> args = spy.takeLast();
@@ -95,6 +99,7 @@ void tst_wordscounterworker::testResetFunctionality()
     worker.addWordToMap("reset");
     worker.resetCountedWordsMap();
     worker.addWordToMap("new");
+    worker.recalculateTopFrequentWordsList();
 
     QVERIFY(spy.count() > 0);
     QList<QVariant> args = spy.takeLast();
@@ -112,6 +117,7 @@ void tst_wordscounterworker::testEmptyInputIgnored()
 
     worker.addWordToMap("");
     worker.addWordToMap("valid");
+    worker.recalculateTopFrequentWordsList();
 
     QVERIFY(spy.count() > 0);
     QList<QVariant> args = spy.takeLast();

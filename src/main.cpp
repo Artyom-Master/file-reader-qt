@@ -34,13 +34,13 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QCoreApplication::setAttribute(Qt::AA_QtQuickUseDefaultSizePolicy);
 
-    Controller controller;
-    WordsCounterModel wordsCounterModel;
+    std::shared_ptr<WordsCounterModel> wordsCounterModel = std::make_shared<WordsCounterModel>();
+    Controller controller(wordsCounterModel);
 
     QQmlApplicationEngine engine;
 
+    engine.rootContext()->setContextProperty("wordsCounterModel", wordsCounterModel.get());
     engine.rootContext()->setContextProperty("controller", &controller);
-    engine.rootContext()->setContextProperty("wordsCounterModel", &wordsCounterModel);
 
     const QUrl url(QStringLiteral("qrc:/file-reader-qt/qml/Main.qml"));
     QObject::connect(
