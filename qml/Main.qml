@@ -8,8 +8,8 @@ Window {
     visible: true
     title: qsTr("Words counter")
 
-    minimumWidth: mainView.Layout.minimumWidth + 2 * mainView.variableMarginSize
-    minimumHeight: mainView.Layout.minimumHeight + 2 * mainView.variableMarginSize
+    minimumWidth: mainView.Layout.minimumWidth + 2 * mainView.appMargin
+    minimumHeight: mainView.Layout.minimumHeight + 2 * mainView.appMargin
 
     Views.MainView {
         id: mainView
