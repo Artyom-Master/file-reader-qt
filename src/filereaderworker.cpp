@@ -98,7 +98,7 @@ void FileReaderWorker::run()
 }
 
 QStringList FileReaderWorker::extractWords(const QString& input) {
-    QRegularExpression regex("[a-zA-Z]+");
+    QRegularExpression regex("\\p{L}+");
     QRegularExpressionMatchIterator it = regex.globalMatch(input);
     QStringList words;
 

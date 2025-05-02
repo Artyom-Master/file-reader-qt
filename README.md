@@ -118,7 +118,7 @@ Code is divided into modules as follows:
 - **std threads synchronization primitives (shared_mutex, condition_variable, atomic)** for asynchronous controling workers from *Controller* (pause, resume, cancel),
 - **QTimer** that constantly in time takes read words from *FileReaderWorker* and send them to *WordsCounterWorker*,
 - **QThreads** for executing heavy operations with files and words counting in separated threads,
-- **QRegularExpression** for spliting read substrings on words consisting only a-z ans A-Z symbols,
+- **QRegularExpression** for spliting read substrings on words consisting of Unicode letters,
 - **Q_PROPERTIES** in *Controller* and *WordsCounterModel* to smoothly update QML Items properties,
 - **signals and slots** for appropriate communication between *Controller* comands and *workers*,
 - **QML Layouts** for *adaptive UI*,
@@ -135,4 +135,4 @@ There are still some moments that could be done:
 - maybe there could be better approaches in connecting processing steps (sometimes cancel process can be executed before some last data portions processing finish what will lead to executing some work after canceling what is not well),
 - more time for tests and logs creation (I was limited in time so tests are temporarily turned off and logs can be not so informative, I added them to show that I use it in my job),
 - when process big file, after some point *hash map of counted words* becomes too big what leads to slowing search of top frequent words on each UI update that accordingly leads to UI lags (the problem is in algorithm of constant updating, it multiplies already big time fpr processing each UI update; I don't see a solution for it, even processing hash map only once can be slow if it big enough, so using more powerful hardware and/or processing enough small files is th only option for me (I also can increase time intervals between updates but this solution also has limit)),
-- adding **regular expression** for spliting words that match "[a-zA-Z]+" made processing much slower (I think about x10 times), maybe there is a better solution.
+- adding **regular expression** for spliting words that match Unicode letters made processing much slower (I think about x10 times), maybe there is a better solution.
