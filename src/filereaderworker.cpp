@@ -3,6 +3,7 @@
 #include <QTextStream>
 #include <QDebug>
 #include <QFileInfo>
+#include <QRegularExpression>
 
 #include <mutex>
 
@@ -81,17 +82,30 @@ void FileReaderWorker::start()
 void FileReaderWorker::run()
 {
     QTextStream inStream(&m_currentFile);
-    QString word;
+    QString substring;
 
     while (!m_canceled && !inStream.atEnd())
     {
-        inStream >> word;
-        if (!word.isEmpty())
+        inStream >> substring;
+        if (!substring.isEmpty())
         {
             std::unique_lock lock(m_readWordsMutex);
-            m_readWords.append(word);
+            m_readWords.append(extractWords(substring));
         }
 
         callCVWait();
     }
+}
+
+QStringList FileReaderWorker::extractWords(const QString& input) {
+    QRegularExpression regex("[a-zA-Z]+");
+    QRegularExpressionMatchIterator it = regex.globalMatch(input);
+    QStringList words;
+
+    while (it.hasNext()) {
+        QRegularExpressionMatch match = it.next();
+        words << match.captured(0);
+    }
+
+    return words;
 }

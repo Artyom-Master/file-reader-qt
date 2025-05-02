@@ -34,6 +34,7 @@ signals:
 
 private:
     void run() override;
+    QStringList extractWords(const QString& input);
 
     QFile m_currentFile;
     QStringList m_readWords;
