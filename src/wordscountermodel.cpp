@@ -14,8 +14,6 @@ WordsCounterModel::WordsCounterModel(QObject *parent)
 int WordsCounterModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
-
-    qDebug() << QString("rowCount of model is %1").arg(m_topFrequentWordsList.count());
     return m_topFrequentWordsList.count();
 }
 
@@ -33,22 +31,18 @@ QVariant WordsCounterModel::data(const QModelIndex &index, int role) const
     {
         case WordRole:
         {
-            qDebug() << QString("Return word = %1 role").arg(entry.word);
             return entry.word;
         }
         case CountRole:
         {
-            qDebug() << QString("Return count = %1 role").arg(entry.count);
             return entry.count;
         }
         case MaxWordCountRole:
         {
-            qDebug() << QString("Return maxWordCount = %1 role").arg(entry.maxWordCount);
             return entry.maxWordCount;
         }
         default:
         {
-            qDebug() << QString("Invalid role").arg(role);
             return QVariant();
         }
     }
