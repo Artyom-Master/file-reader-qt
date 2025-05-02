@@ -65,7 +65,6 @@ void WordsCounterWorker::run()
         if(m_canceled)
         {
             m_canceled = false;
-            finishWork();
             return;
         }
 
@@ -87,7 +86,6 @@ void WordsCounterWorker::run()
         if(m_canceled)
         {
             m_canceled = false;
-            finishWork();
             return;
         }
 

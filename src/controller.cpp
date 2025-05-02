@@ -125,8 +125,10 @@ void Controller::cancelProcessing()
 
     m_wordsCounterWorker.resume();
     m_wordsCounterWorker.cancel();
+    emit finishWordsCounterWorker();
 
     emit clearHistogramData();
+    setPauseButtonText("Pause");
 }
 
 void Controller::finishProcessing()
