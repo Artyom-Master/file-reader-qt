@@ -38,6 +38,13 @@ ColumnLayout {
             ? (barCount / barMaxCount) * (histogramBar.Layout.preferredHeight - barCountLabelMetrics.boundingRect.height - barWordLabelMetrics.boundingRect.height)
             : 0
 
+        Behavior on Layout.preferredHeight {
+            NumberAnimation {
+                duration: 400
+                easing.type: Easing.InOutQuad
+            }
+        }
+
         color: "royalblue"
         border.color: "black"
         border.width: 1

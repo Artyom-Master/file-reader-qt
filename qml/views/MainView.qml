@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+
 import "../components" as Components
 
 RowLayout {
@@ -90,7 +91,13 @@ RowLayout {
 
             from: 0
             to: 100
-            value: wordsCounterModel.countProgress  // Bind this to a property that updates with processing progress
+            value: wordsCounterModel.countProgress
+
+            Behavior on value {
+                SmoothedAnimation {
+                    velocity: 200
+                }
+            }
         }
     }
 
