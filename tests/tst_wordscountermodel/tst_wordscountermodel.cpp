@@ -8,94 +8,57 @@ class tst_wordscountermodel : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_wordscountermodel();
-    ~tst_wordscountermodel();
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
-
-    void testInitialState();
-    void testSetTopFrequentWordsList();
-    void testResetModel();
-    void testInvalidIndices();
-    void testRoleNames();
-    void testEmptyInput();
-};
-
-tst_wordscountermodel::tst_wordscountermodel() {}
-
-tst_wordscountermodel::~tst_wordscountermodel() {}
-
-void tst_wordscountermodel::initTestCase() {}
-
-void tst_wordscountermodel::cleanupTestCase() {}
-
-void tst_wordscountermodel::testInitialState()
-{
-    WordsCounterModel model;
-    QCOMPARE(model.rowCount(), 0);
-    QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
-}
-
-void tst_wordscountermodel::testSetTopFrequentWordsList()
-{
-    WordsCounterModel model;
-    std::vector<std::pair<QString, int>> words = {
-        {"hello", 5},
-        {"world", 3}
-    };
-    model.setTopFrequentWordsList(words, 5);
-    QCOMPARE(model.rowCount(), static_cast<int>(words.size()));
-    for (int i = 0; i < model.rowCount(); ++i) {
-        QCOMPARE(model.data(model.index(i, 0), WordsCounterModel::WordRole).toString(), words[i].first);
-        QCOMPARE(model.data(model.index(i, 0), WordsCounterModel::CountRole).toInt(), words[i].second);
+    void initTestCase() {
+        model = new WordsCounterModel;
     }
-}
+    void cleanupTestCase() {
+        delete model;
+    }
 
-void tst_wordscountermodel::testResetModel()
-{
-    WordsCounterModel model;
-    std::vector<std::pair<QString, int>> words = {
-        {"hello", 5},
-        {"world", 3}
-    };
-    model.setTopFrequentWordsList(words, 5);
-    model.resetModel();
-    QCOMPARE(model.rowCount(), 0);
-    QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
-}
+    void testInitialState() {
+        QCOMPARE(model->rowCount(), 0);                                                   // empty at start
+        QVERIFY(!model->data(model->index(0,0), WordsCounterModel::WordRole).isValid()); // no data
+    }
 
-void tst_wordscountermodel::testInvalidIndices()
-{
-    WordsCounterModel model;
-    std::vector<std::pair<QString, int>> words = {
-        {"hello", 5}
-    };
-    model.setTopFrequentWordsList(words, 5);
-    QVERIFY(!model.data(model.index(-1, 0), WordsCounterModel::WordRole).isValid());
-    QVERIFY(!model.data(model.index(1, 0), WordsCounterModel::WordRole).isValid());
-}
+    void testRoleNames() {
+        auto roles = model->roleNames();
+        QVERIFY(roles.contains(WordsCounterModel::WordRole));
+        QVERIFY(roles.contains(WordsCounterModel::CountRole));
+        QVERIFY(roles.contains(WordsCounterModel::MaxWordCountRole));
+    }
 
-void tst_wordscountermodel::testRoleNames()
-{
-    WordsCounterModel model;
-    QHash<int, QByteArray> roles = model.roleNames();
-    QVERIFY(roles.contains(WordsCounterModel::WordRole));
-    QVERIFY(roles.contains(WordsCounterModel::CountRole));
-    QCOMPARE(roles.value(WordsCounterModel::WordRole), QByteArray("word"));
-    QCOMPARE(roles.value(WordsCounterModel::CountRole), QByteArray("count"));
-}
+    void testSetTopFrequentWordsList() {
+        std::vector<std::pair<QString,int>> entries = {
+            { "apple", 5 }, { "banana", 3 }, { "cherry", 7 }
+        };
+        QSignalSpy lengthSpy(model, &WordsCounterModel::lengthChanged);
+        QSignalSpy progressSpy(model, &WordsCounterModel::countProgressChanged);
+        QSignalSpy statusSpy(model, &WordsCounterModel::statusInfoTextChanged);
 
-void tst_wordscountermodel::testEmptyInput()
-{
-    WordsCounterModel model;
-    std::vector<std::pair<QString, int>> emptyWords;
-    model.setTopFrequentWordsList(emptyWords, 0);
-    QCOMPARE(model.rowCount(), 0);
-    QVERIFY(!model.data(model.index(0, 0), WordsCounterModel::WordRole).isValid());
-}
+        model->setTopFrequentWordsList(entries, /*max*/7, /*progress*/42);
+
+        QCOMPARE(model->rowCount(), 3);
+        // check first entry
+        QCOMPARE(model->data(model->index(0,0), WordsCounterModel::WordRole).toString(), QString("apple"));
+        QCOMPARE(model->data(model->index(0,0), WordsCounterModel::CountRole).toInt(), 5);
+        QCOMPARE(model->data(model->index(0,0), WordsCounterModel::MaxWordCountRole).toInt(), 7);
+
+        QCOMPARE(lengthSpy.count(), 1);
+        QCOMPARE(progressSpy.count(), 1);
+        QCOMPARE(statusSpy.count(), 1);
+    }
+
+    void testClearData() {
+        model->clearData();
+        QCOMPARE(model->rowCount(), 0);
+        QCOMPARE(model->length(), 0);
+        QCOMPARE(model->countProgress(), 0);
+    }
+
+private:
+    WordsCounterModel *model;
+};
 
 QTEST_MAIN(tst_wordscountermodel)
 

@@ -14,13 +14,14 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(../../src/)
+include_directories(../../src/ ../../src/abstractworker)
 
 add_executable(tst_controller tst_controller.cpp
     ../../src/controller.cpp
     ../../src/filereaderworker.cpp
     ../../src/wordscountermodel.cpp
-    ../../src/wordscounterworker.cpp)
+    ../../src/wordscounterworker.cpp
+    ../../src/abstractworker/abstractworker.cpp)
 
 add_test(NAME tst_controller COMMAND tst_controller)
 

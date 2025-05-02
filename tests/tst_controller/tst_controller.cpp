@@ -7,116 +7,75 @@ class tst_controller : public QObject
 {
     Q_OBJECT
 
-public:
-    tst_controller();
-    ~tst_controller();
-
-//private:
-    //Controller m_controller;
-
 private slots:
-    void initTestCase();
-    void cleanupTestCase();
+    void initTestCase() {
+        model = std::make_shared<WordsCounterModel>();
+        ctrl = new Controller(model, nullptr);
+    }
+    void cleanupTestCase() {
+        delete ctrl;
+    }
 
-    void testInitialProperties();
-    void testCanPauseProperty();
-    void testCanCancelProperty();
+    void testInitialFlags() {
+        QCOMPARE(ctrl->canOpenFile(), true);
+        QCOMPARE(ctrl->canStart(), false);
+        QCOMPARE(ctrl->canPause(), false);
+        QCOMPARE(ctrl->canCancel(), false);
+    }
 
-    void testOpenFileEmptyUrl();
-    void testOpenFileValidUrl();
-    void testStartProcessing();
+    void testOpenFileSignal() {
+        QSignalSpy spy(ctrl, &Controller::openFileSignal);
+        ctrl->openFile(QUrl());              // empty
+        QCOMPARE(spy.count(), 0);
+
+        QString tmp = QDir::temp().filePath("dummy.txt");
+        QUrl url = QUrl::fromLocalFile(tmp);
+        ctrl->openFile(url);
+        QCOMPARE(spy.count(), 1);
+        QCOMPARE(spy.takeFirst().at(0).toString(), tmp);
+    }
+
+    void testStartProcessingEmitsReadFile() {
+        QSignalSpy spy(ctrl, &Controller::readFileSignal);
+        ctrl->startProcessing();
+        QCOMPARE(spy.count(), 1);
+
+        // Flags should update
+        QCOMPARE(ctrl->canOpenFile(), false);
+        QCOMPARE(ctrl->canStart(), false);
+        QCOMPARE(ctrl->canPause(), true);
+        QCOMPARE(ctrl->canCancel(), true);
+    }
+
+    void testPauseContinueToggle() {
+        ctrl->setPauseButtonText("Pause");
+        ctrl->pauseProcessing();
+        QCOMPARE(ctrl->pauseButtonText(), QString("Continue"));
+        QCOMPARE(ctrl->canPause(), true);  // still can pause/continue
+
+        ctrl->pauseProcessing();
+        QCOMPARE(ctrl->pauseButtonText(), QString("Pause"));
+    }
+
+    void testCancelProcessingClearsHistogram() {
+        QSignalSpy clearSpy(ctrl, &Controller::clearHistogramData);
+        ctrl->cancelProcessing();
+        // should emit clearHistogramData at least once
+        QVERIFY(clearSpy.count() >= 1);
+    }
+
+    void testFinishProcessingResetsFlags() {
+        ctrl->finishProcessing();
+        QCOMPARE(ctrl->canOpenFile(), true);
+        QCOMPARE(ctrl->canStart(), false);
+        QCOMPARE(ctrl->canPause(), false);
+        QCOMPARE(ctrl->canCancel(), false);
+    }
 
 private:
-    std::shared_ptr<WordsCounterModel> m_model;
-    std::unique_ptr<Controller> m_ctrl;
+    std::shared_ptr<WordsCounterModel> model;
+    Controller *ctrl;
 };
-
-tst_controller::tst_controller() {}
-
-tst_controller::~tst_controller() {}
-
-void tst_controller::initTestCase()
-{
-    m_model = std::make_shared<WordsCounterModel>();
-    m_ctrl = std::make_unique<Controller>(m_model);
-}
-
-void tst_controller::cleanupTestCase() {}
-
-void tst_controller::testInitialProperties()
-{
-    // By default, canPause and canCancel should be false
-    QCOMPARE(m_ctrl->canPause(),  false);
-    QCOMPARE(m_ctrl->canCancel(), false);
-}
-
-void tst_controller::testCanPauseProperty()
-{
-    QSignalSpy spy(m_ctrl.get(), &Controller::canPauseChanged);
-
-    // Setting to the same value should NOT emit
-    m_ctrl->setCanPause(false);
-    QCOMPARE(spy.count(), 0);
-
-    // Changing from false → true should emit once
-    m_ctrl->setCanPause(true);
-    QCOMPARE(spy.count(), 1);
-    QCOMPARE(m_ctrl->canPause(), true);
-
-    // Changing back → emit again
-    m_ctrl->setCanPause(false);
-    QCOMPARE(spy.count(), 2);
-    QCOMPARE(m_ctrl->canPause(), false);
-}
-
-void tst_controller::testCanCancelProperty()
-{
-    QSignalSpy spy(m_ctrl.get(), &Controller::canCancelChanged);
-
-    m_ctrl->setCanCancel(false);
-    QCOMPARE(spy.count(), 0);
-
-    m_ctrl->setCanCancel(true);
-    QCOMPARE(spy.count(), 1);
-    QCOMPARE(m_ctrl->canCancel(), true);
-
-    m_ctrl->setCanCancel(false);
-    QCOMPARE(spy.count(), 2);
-    QCOMPARE(m_ctrl->canCancel(), false);
-}
-
-void tst_controller::testOpenFileEmptyUrl()
-{
-    QSignalSpy spy(m_ctrl.get(), &Controller::openFileSignal);
-
-    // Passing an empty QUrl should not emit
-    m_ctrl->openFile(QUrl());
-    QCOMPARE(spy.count(), 0);
-}
-
-void tst_controller::testOpenFileValidUrl()
-{
-    QSignalSpy spy(m_ctrl.get(), &Controller::openFileSignal);
-
-    // Use a file:// URL
-    const QString  path = QDir::temp().filePath("dummy.txt");
-    QUrl           url  = QUrl::fromLocalFile(path);
-
-    m_ctrl->openFile(url);
-
-    // Must emit exactly once, with the correct local‐file path
-    QCOMPARE(spy.count(), 1);
-    QList<QVariant> args = spy.takeFirst();
-    QCOMPARE(args.at(0).toString(), path);
-}
-
-void tst_controller::testStartProcessing()
-{
-    QSignalSpy spy(m_ctrl.get(), &Controller::readFileSignal);
-
-    m_ctrl->startProcessing();
-    QCOMPARE(spy.count(), 1);
-}
 
 QTEST_MAIN(tst_controller)
 

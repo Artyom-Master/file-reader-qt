@@ -14,10 +14,11 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-include_directories(../../src/)
+include_directories(../../src/ ../../src/abstractworker)
 
 add_executable(tst_filereaderworker tst_filereaderworker.cpp
-    ../../src/filereaderworker.cpp)
+    ../../src/filereaderworker.cpp
+    ../../src/abstractworker/abstractworker.cpp)
 add_test(NAME tst_filereaderworker COMMAND tst_filereaderworker)
 
 target_link_libraries(tst_filereaderworker PRIVATE Qt${QT_VERSION_MAJOR}::Test)
