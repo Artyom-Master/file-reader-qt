@@ -19,6 +19,8 @@ class Controller : public QObject
     Q_PROPERTY(bool canPause READ canPause WRITE setCanPause NOTIFY canPauseChanged)
     Q_PROPERTY(bool canCancel READ canCancel WRITE setCanCancel NOTIFY canCancelChanged)
     Q_PROPERTY(QString pauseButtonText READ pauseButtonText WRITE setPauseButtonText NOTIFY pauseButtonTextChanged)
+    Q_PROPERTY(int countProgress READ countProgress WRITE setCountProgress NOTIFY countProgressChanged)
+    Q_PROPERTY(QString statusInfoText READ statusInfoText WRITE setStatusInfoText NOTIFY statusInfoTextChanged)
 
 public:
     explicit Controller(const std::shared_ptr<WordsCounterModel>& wordsCounterModel, QObject *parent = nullptr);
@@ -64,9 +66,26 @@ public:
         }
     }
 
+    int countProgress() const { return m_countProgress; }
+    void setCountProgress(int countProgress) {
+        if (m_countProgress != countProgress) {
+            m_countProgress = countProgress;
+            emit countProgressChanged();
+        }
+    }
+
+    QString statusInfoText() const { return m_statusInfoText; }
+    void setStatusInfoText(const QString& statusInfoText) {
+        if (m_statusInfoText != statusInfoText) {
+            m_statusInfoText = statusInfoText;
+            emit statusInfoTextChanged();
+        }
+    }
+
 public slots:
     void openFile(const QUrl& fileUrl);
-    void updateTopFrequentWordsHistogram();
+    void passReadWordsToWordsCounterWorker();
+    void updateTopFrequentWordsHistogram(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int readingProgress);
 
     void startProcessing();
     void pauseProcessing();
@@ -80,6 +99,8 @@ signals:
     void canPauseChanged();
     void canCancelChanged();
     void pauseButtonTextChanged();
+    void countProgressChanged();
+    void statusInfoTextChanged();
 
     void openFileSignal(const QString& fileUrl);
     void readFileSignal();
@@ -95,6 +116,8 @@ private:
     bool m_canPause;
     bool m_canCancel;
     QString m_pauseButtonText;
+    int m_countProgress;
+    QString m_statusInfoText;
 
     QThread m_fileReaderWorkerThread;
     QThread m_wordsCounterWorkerThread;

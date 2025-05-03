@@ -32,11 +32,9 @@ private slots:
         std::vector<std::pair<QString,int>> entries = {
             { "apple", 5 }, { "banana", 3 }, { "cherry", 7 }
         };
-        QSignalSpy lengthSpy(model, &WordsCounterModel::lengthChanged);
-        QSignalSpy progressSpy(model, &WordsCounterModel::countProgressChanged);
-        QSignalSpy statusSpy(model, &WordsCounterModel::statusInfoTextChanged);
+        QSignalSpy lengthSpy(model, &WordsCounterModel::wordsCountChanged);
 
-        model->setTopFrequentWordsList(entries, /*max*/7, /*progress*/42);
+        model->setTopFrequentWordsList(entries, /*max*/7);
 
         QCOMPARE(model->rowCount(), 3);
         // check first entry
@@ -45,15 +43,12 @@ private slots:
         QCOMPARE(model->data(model->index(0,0), WordsCounterModel::MaxWordCountRole).toInt(), 7);
 
         QCOMPARE(lengthSpy.count(), 1);
-        QCOMPARE(progressSpy.count(), 1);
-        QCOMPARE(statusSpy.count(), 1);
     }
 
     void testClearData() {
         model->clearData();
         QCOMPARE(model->rowCount(), 0);
-        QCOMPARE(model->length(), 0);
-        QCOMPARE(model->countProgress(), 0);
+        QCOMPARE(model->wordsCount(), 0);
     }
 
 private:

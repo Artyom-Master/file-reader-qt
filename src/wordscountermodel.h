@@ -7,9 +7,7 @@ class WordsCounterModel : public QAbstractListModel
 {
     Q_OBJECT
 
-    Q_PROPERTY(int countProgress READ countProgress WRITE setCountProgress NOTIFY countProgressChanged)
-    Q_PROPERTY(QString statusInfoText READ statusInfoText WRITE setStatusInfoText NOTIFY statusInfoTextChanged)
-    Q_PROPERTY(int length READ length WRITE setLength NOTIFY lengthChanged)
+    Q_PROPERTY(int wordsCount READ wordsCount WRITE setWordsCount NOTIFY wordsCountChanged)
 
 public:
     enum WordRoles {
@@ -20,27 +18,11 @@ public:
 
     explicit WordsCounterModel(QObject *parent = nullptr);
 
-    int countProgress() const { return m_countProgress; }
-    void setCountProgress(int countProgress) {
-        if (m_countProgress != countProgress) {
-            m_countProgress = countProgress;
-            emit countProgressChanged();
-        }
-    }
-
-    QString statusInfoText() const { return m_statusInfoText; }
-    void setStatusInfoText(const QString& statusInfoText) {
-        if (m_statusInfoText != statusInfoText) {
-            m_statusInfoText = statusInfoText;
-            emit statusInfoTextChanged();
-        }
-    }
-
-    int length() const { return m_length; }
-    void setLength(int length) {
-        if (m_length != length) {
-            m_length = length;
-            emit lengthChanged();
+    int wordsCount() const { return m_wordsCount; }
+    void setWordsCount(int wordsCount) {
+        if (m_wordsCount != wordsCount) {
+            m_wordsCount = wordsCount;
+            emit wordsCountChanged();
         }
     }
 
@@ -49,13 +31,11 @@ public:
     QHash<int, QByteArray> roleNames() const override;
 
 public slots:
-    void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int currentReadingProgress);
+    void setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount);
     void clearData();
 
 signals:
-    void countProgressChanged();
-    void statusInfoTextChanged();
-    void lengthChanged();
+    void wordsCountChanged();
 
 private:
     struct WordEntry {
@@ -65,10 +45,7 @@ private:
     };
 
     QList<WordEntry> m_topFrequentWordsList;
-
-    int m_countProgress;
-    QString m_statusInfoText;
-    int m_length;
+    int m_wordsCount;
 };
 
 #endif // WORDSCOUNTERMODEL_H

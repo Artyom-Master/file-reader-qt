@@ -4,9 +4,7 @@
 WordsCounterModel::WordsCounterModel(QObject *parent)
     : QAbstractListModel(parent)
     , m_topFrequentWordsList{}
-    , m_countProgress{ 0 }
-    , m_statusInfoText{"Open any text file."}
-    , m_length{ 0 }
+    , m_wordsCount{ 0 }
 {
 
 }
@@ -57,7 +55,7 @@ QHash<int, QByteArray> WordsCounterModel::roleNames() const
     return roles;
 }
 
-void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int currentReadingProgress)
+void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount)
 {
     if(maxWordCount == 0)
     {
@@ -76,10 +74,7 @@ void WordsCounterModel::setTopFrequentWordsList(std::vector<std::pair<QString, i
 
     endInsertRows();
 
-    setLength(m_topFrequentWordsList.count());
-    setCountProgress(currentReadingProgress);
-    setStatusInfoText(QString("Progress of words counting: %1%.").arg(currentReadingProgress));
-
+    setWordsCount(m_topFrequentWordsList.count());
     qInfo() << "Finish insertion of new wordsList in model";
 }
 
@@ -91,6 +86,5 @@ void WordsCounterModel::clearData()
     m_topFrequentWordsList.clear();
     endResetModel();
 
-    setLength(0);
-    setCountProgress(0);
+    setWordsCount(0);
 }

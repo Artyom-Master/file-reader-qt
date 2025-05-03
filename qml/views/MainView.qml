@@ -67,9 +67,9 @@ RowLayout {
 
             Layout.fillWidth: true
             Layout.fillHeight: true
-            Layout.minimumWidth: wordsCounterModel.length > 0
-                                 ? (barMinimumWidth * wordsCounterModel.length
-                                    + (wordsCounterModel.length - 1) * barsSpacing
+            Layout.minimumWidth: wordsCounterModel.wordsCount > 0
+                                 ? (barMinimumWidth * wordsCounterModel.wordsCount
+                                    + (wordsCounterModel.wordsCount - 1) * barsSpacing
                                     + numbersOfOccurenciesLabelWidth + mainView.appMargin * 3)
                                  : mainView.minimumHistogramWidth
             Layout.minimumHeight: mainView.minimumHistogramHeight
@@ -77,7 +77,7 @@ RowLayout {
 
         //Status info
         Text {
-            text: qsTr(wordsCounterModel.statusInfoText)
+            text: qsTr(controller.statusInfoText)
             font.pixelSize: mainView.appFontSize
         }
 
@@ -91,7 +91,7 @@ RowLayout {
 
             from: 0
             to: 100
-            value: wordsCounterModel.countProgress
+            value: controller.countProgress
 
             Behavior on value {
                 SmoothedAnimation {

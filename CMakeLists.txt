@@ -7,7 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 REQUIRED COMPONENTS Quick)
 
-
 qt_add_executable(file-reader-qt
     src/main.cpp
 )
@@ -17,16 +16,15 @@ qt_add_qml_module(file-reader-qt
     VERSION 1.0
     QML_FILES
         qml/Main.qml
-        SOURCES src/controller.h src/controller.cpp
-        SOURCES src/wordscountermodel.h src/wordscountermodel.cpp
-        SOURCES src/filereaderworker.h src/filereaderworker.cpp
-        QML_FILES
-        QML_FILES qml/components/HistogramView.qml
-        QML_FILES qml/components/HistogramBar.qml
-        QML_FILES qml/views/MainView.qml
-        SOURCES
-        SOURCES src/wordscounterworker.h src/wordscounterworker.cpp
-        SOURCES src/abstractworker/abstractworker.h src/abstractworker/abstractworker.cpp
+        qml/components/HistogramView.qml
+        qml/components/HistogramBar.qml
+        qml/views/MainView.qml
+    SOURCES
+        src/controller.h src/controller.cpp
+        src/wordscountermodel.h src/wordscountermodel.cpp
+        src/filereaderworker.h src/filereaderworker.cpp
+        src/wordscounterworker.h src/wordscounterworker.cpp
+        src/abstractworker/abstractworker.h src/abstractworker/abstractworker.cpp
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
@@ -40,9 +38,7 @@ set_target_properties(file-reader-qt PROPERTIES
     WIN32_EXECUTABLE TRUE
 )
 
-target_link_libraries(file-reader-qt
-    PRIVATE Qt6::Quick
-)
+target_link_libraries(file-reader-qt PRIVATE Qt6::Quick)
 
 include(GNUInstallDirs)
 install(TARGETS file-reader-qt
