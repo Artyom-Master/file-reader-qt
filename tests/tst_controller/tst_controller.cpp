@@ -57,21 +57,6 @@ private slots:
         QCOMPARE(ctrl->pauseButtonText(), QString("Pause"));
     }
 
-    void testCancelProcessingClearsHistogram() {
-        QSignalSpy clearSpy(ctrl, &Controller::clearHistogramData);
-        ctrl->cancelProcessing();
-        // should emit clearHistogramData at least once
-        QVERIFY(clearSpy.count() >= 1);
-    }
-
-    void testFinishProcessingResetsFlags() {
-        ctrl->finishProcessing();
-        QCOMPARE(ctrl->canOpenFile(), true);
-        QCOMPARE(ctrl->canStart(), false);
-        QCOMPARE(ctrl->canPause(), false);
-        QCOMPARE(ctrl->canCancel(), false);
-    }
-
 private:
     std::shared_ptr<WordsCounterModel> model;
     Controller *ctrl;

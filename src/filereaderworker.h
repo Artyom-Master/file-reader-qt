@@ -8,7 +8,7 @@
 
 #include "abstractworker/abstractworker.h"
 
-struct FileReasingProgress
+struct FileReadingProgress
 {
     QStringList readWords;
     int readingProgress{};
@@ -21,11 +21,12 @@ class FileReaderWorker : public QObject, public AbstractWorker
 public:
     explicit FileReaderWorker(QObject *parent = nullptr);
 
-    FileReasingProgress getReadWords();
+    FileReadingProgress getReadWords();
 
 public slots:
     void openFile(const QString &filePath);
     void start();
+    void clearData();
 
 signals:
     void fileOpened(const QString& openedFileName);

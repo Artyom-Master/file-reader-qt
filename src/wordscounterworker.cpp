@@ -9,23 +9,36 @@ constexpr int COUNT_OF_MOST_FREQUENT_WORDS_IN_FILE{ 15 };
 
 WordsCounterWorker::WordsCounterWorker(QObject *parent)
     : QObject{parent}
+    , AbstractWorker{}
     , m_countedWordsMap{}
     , m_currentReadingProgress{ 0 }
 {
 
 }
 
-void WordsCounterWorker::updateDataAndStart(QStringList words, int readingProgress)
+void WordsCounterWorker::updateDataAndStart(QStringList words, int readingProgress, bool last)
 {
-    if(readingProgress <= 100 && readingProgress >= 0 && readingProgress >= m_currentReadingProgress)
+    if(m_canceled)
     {
-        m_currentReadingProgress = readingProgress;
+        if(last)
+        {
+            m_canceled = false;
+            clearData();
+            emit finished();
+        }
+
+        return;
     }
 
-    if(words.isEmpty())
+    if(words.isEmpty() && !last)
     {
         qDebug() << "Got empty words list";
         return;
+    }
+
+    if(readingProgress <= 100 && readingProgress >= 0 && readingProgress >= m_currentReadingProgress)
+    {
+        m_currentReadingProgress = readingProgress;
     }
 
     qDebug() << "Add words list to countedWordsMap";
@@ -38,12 +51,12 @@ void WordsCounterWorker::updateDataAndStart(QStringList words, int readingProgre
     qInfo() << "Start search of top n frequent words";
     run();
     qInfo() << "Finish search of top n frequent words";
-}
 
-void WordsCounterWorker::finishWork()
-{
-    clearData();
-    emit finished();
+    if(last)
+    {
+        clearData();
+        emit finished();
+    }
 }
 
 void WordsCounterWorker::run()
@@ -65,6 +78,9 @@ void WordsCounterWorker::run()
         if(m_canceled)
         {
             m_canceled = false;
+            clearData();
+            emit finished();
+
             return;
         }
 
@@ -86,6 +102,9 @@ void WordsCounterWorker::run()
         if(m_canceled)
         {
             m_canceled = false;
+            clearData();
+            emit finished();
+
             return;
         }
 

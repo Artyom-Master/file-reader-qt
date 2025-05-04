@@ -5,7 +5,7 @@ project(tst_controller LANGUAGES CXX)
 enable_testing()
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test StateMachine)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -25,5 +25,5 @@ add_executable(tst_controller tst_controller.cpp
 
 add_test(NAME tst_controller COMMAND tst_controller)
 
-target_link_libraries(tst_controller PRIVATE Qt${QT_VERSION_MAJOR}::Test)
+target_link_libraries(tst_controller PRIVATE Qt${QT_VERSION_MAJOR}::Test Qt${QT_VERSION_MAJOR}::StateMachine)
 

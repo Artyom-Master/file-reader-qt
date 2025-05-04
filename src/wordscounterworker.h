@@ -12,12 +12,11 @@ public:
     explicit WordsCounterWorker(QObject *parent = nullptr);
 
 public slots:
-    void updateDataAndStart(QStringList words, int readingProgress);
-    void finishWork();
+    void updateDataAndStart(QStringList words, int readingProgress, bool last);
 
 signals:
-    void finished();
     void updatedTopFrequentWordsList(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int readingProgress);
+    void finished();
 
 private:
     void run() override;

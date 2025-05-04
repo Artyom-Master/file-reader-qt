@@ -5,6 +5,7 @@
 #include <QThread>
 #include <QUrl>
 #include <QTimer>
+#include <QStateMachine>
 
 #include "filereaderworker.h"
 #include "wordscountermodel.h"
@@ -84,13 +85,14 @@ public:
 
 public slots:
     void openFile(const QUrl& fileUrl);
+    void setReadyToStartState(const QString& openedFileName);
     void passReadWordsToWordsCounterWorker();
     void updateTopFrequentWordsHistogram(std::vector<std::pair<QString, int>> currentList, int maxWordCount, int readingProgress);
+    void stopTakingReadWords();
 
     void startProcessing();
     void pauseProcessing();
     void cancelProcessing();
-    void finishProcessing();
 
 
 signals:
@@ -102,15 +104,19 @@ signals:
     void countProgressChanged();
     void statusInfoTextChanged();
 
-    void openFileSignal(const QString& fileUrl);
-    void readFileSignal();
+    void gotFileName(const QString& fileUrl);
+    void tookLastReadWords();
 
-    void startCountOfReadWords(QStringList readWords, int readingProgress);
-    void finishWordsCounterWorker();
+    void readyToStart();
+    void startButtonClicked();
+    void pauseButtonClicked();
+    void continueButtonClicked();
 
-    void clearHistogramData();
+    void gotPortionOfWordsInFile(QStringList readWords, int readingProgress, bool isLast = false);
 
 private:
+    void disableUIButtons();
+
     bool m_canOpenFile;
     bool m_canStart;
     bool m_canPause;
@@ -127,6 +133,13 @@ private:
 
     std::shared_ptr<WordsCounterModel> m_wordsCounterModel;
     QTimer m_getReadWordsTimer;
+
+    QStateMachine m_stateMachine;
+    QState m_initState;
+    QState m_readyToStartState;
+    QState m_processingState;
+    QState m_finishedState;
+    QState m_pausedState;
 };
 
 #endif // CONTROLLER_H

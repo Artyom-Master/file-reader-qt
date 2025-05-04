@@ -17,11 +17,11 @@ FileReaderWorker::FileReaderWorker(QObject *parent)
 
 }
 
-FileReasingProgress FileReaderWorker::getReadWords()
+FileReadingProgress FileReaderWorker::getReadWords()
 {
     std::shared_lock lock(m_readWordsMutex);
     auto readWords = m_readWords;
-    m_readWords.clear();
+    clearData();
 
     double readingProgress{ m_currentFile.pos() / static_cast<double>(m_currentFile.size()) };
     qDebug() << QString("Current progress: %1 / %2 = %3").arg(m_currentFile.pos()).arg(m_currentFile.size()).arg(readingProgress * 100);
@@ -68,15 +68,7 @@ void FileReaderWorker::start()
     qInfo() << QString("Finish reading file %1").arg(m_currentFile.fileName());
 
     m_currentFile.close();
-
-    if(!m_canceled)
-    {
-        emit finished();
-    }
-    else
-    {
-        m_canceled = false;
-    }
+    emit finished();
 }
 
 void FileReaderWorker::run()
@@ -95,6 +87,17 @@ void FileReaderWorker::run()
 
         callCVWait();
     }
+
+    if(m_canceled)
+    {
+        m_canceled = false;
+        clearData();
+    }
+}
+
+void FileReaderWorker::clearData()
+{
+    m_readWords.clear();
 }
 
 QStringList FileReaderWorker::extractWords(const QString& input) {

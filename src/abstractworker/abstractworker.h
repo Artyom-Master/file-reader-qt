@@ -21,7 +21,7 @@ protected:
 
     std::condition_variable m_pausedCV;
     std::mutex m_pausedMutex;
-    bool m_paused;
+    std::atomic<bool> m_paused;
     std::atomic<bool> m_canceled;
 };
 
